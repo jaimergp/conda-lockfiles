@@ -4973,8 +4973,8 @@ packages:
   timestamp: 1742219694975
 - pypi: .
   name: conda-lockfiles
-  version: 0.1.dev0+d20250427
-  sha256: 5ea8be3bff6d6be63d202061202880903514d0d74c0e04d2fcafd7e613c778aa
+  version: 0.1.dev1+g8c1237c
+  sha256: f6996ed25b15bb5cf1fdcddbe425dcc3fe9cb619a727a401e185cefd485c4f0d
   requires_python: '>=3.9'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/noarch/conda-package-handling-2.4.0-pyh7900ff3_2.conda
