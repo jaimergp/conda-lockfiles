@@ -1,0 +1,44 @@
+package:
+  name: conda-lockfiles
+  {% if GIT_DESCRIBE_TAG is defined and GIT_BUILD_STR is defined %}
+  version: {{ GIT_DESCRIBE_TAG }}+{{ GIT_BUILD_STR }}
+  {% else %}
+  version: 0.0.0dev0
+  {% endif %}
+
+source:
+  # git_url only captures committed code
+  git_url: ../
+
+build:
+  number: 0
+  noarch: python
+  script:
+    - {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+
+requirements:
+  host:
+    - python 3.9
+    - pip
+    - hatchling >=1.12.2
+    - hatch-vcs >=0.2.0
+  run:
+    - python >=3.9
+    - conda >=23.9.0
+    - ruamel.yaml
+
+test:
+  requires:
+    - python 3.9
+  imports:
+    - conda_lockfiles
+    - conda_lockfiles.main
+  commands:
+    - conda lockfiles --help
+
+about:
+  home: https://github.com/conda-incubator/conda-lockfiles
+  license: MIT AND BSD-3-Clause
+  license_file: LICENSE
+  summary: Activate conda environments in new shell processes
+  dev_url: https://github.com/conda-incubator/conda-lockfiles
