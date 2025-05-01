@@ -9,30 +9,14 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
-from .utils import build_number_from_build_string
+from ..utils import build_number_from_build_string
+from .base import BaseLoader
 
 if TYPE_CHECKING:
     from typing import Any
     from collections.abc import Iterable
 
 yaml = YAML(typ="safe")
-
-
-class BaseLoader:
-    def __init__(self, path: str | Path):
-        self.path = Path(path)
-        self.data = self._load(path)
-
-    @classmethod
-    def supports(cls, path: str | Path) -> bool:
-        raise NotImplementedError
-
-    def to_conda_and_pypi(
-        self,
-        environment: str | None = None,
-        platform: str = context.subdir,
-    ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
-        raise NotImplementedError
 
 
 class PixiLoader(BaseLoader):
@@ -113,4 +97,3 @@ class PixiLoader(BaseLoader):
         return PackageRecord(**record_fields)
 
 
-LOADERS = (PixiLoader,)
