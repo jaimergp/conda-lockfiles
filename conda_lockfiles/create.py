@@ -1,29 +1,29 @@
 """ """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-
-from conda.base.context import context
-from conda.misc import explicit
-
-from .exceptions import LockfileFormatNotSupported
-from .loaders import LOADERS
 
 import os
 import sys
 from shutil import which
-from subprocess import run, CompletedProcess
+from subprocess import run
 from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING
 
+from conda.base.context import context
 from conda.common.compat import on_win
-from conda.models.records import PackageRecord
+from conda.misc import explicit
 from conda.models.prefix_graph import PrefixGraph
+
+from .exceptions import LockfileFormatNotSupported
+from .loaders import LOADERS
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from conda.common.path import PathType
     from pathlib import Path
+    from subprocess import CompletedProcess
+
+    from conda.common.path import PathType
+    from conda.models.records import PackageRecord
 
 
 def create_environment_from_lockfile(

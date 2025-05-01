@@ -12,8 +12,8 @@ from ruamel.yaml import YAML
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
-    from typing import Any
     from collections.abc import Iterable
+    from typing import Any
 
 yaml = YAML(typ="safe")
 
@@ -48,8 +48,8 @@ class PixiLoader(BaseLoader):
         packages = env["packages"].get(platform)
         if not packages:
             raise ValueError(
-                f"Environment {environment} does not list packages for platform {platform}. "
-                f"Available platforms: {sorted(env['packages'])}."
+                f"Environment {environment} does not list packages for platform "
+                f"{platform}. Available platforms: {sorted(env['packages'])}."
             )
 
         conda, pypi = [], []
@@ -94,5 +94,3 @@ class PixiLoader(BaseLoader):
                 record_fields["url"] = record_fields.pop("conda", None)
                 break
         return PackageRecord(**record_fields)
-
-

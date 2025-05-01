@@ -4,12 +4,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from conda.base.context import context
-from conda.models.records import PackageRecord
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from typing import Any
-    from collections.abc import Iterable
+
+    from conda.models.records import PackageRecord
 
 
 class BaseLoader:
@@ -30,7 +29,7 @@ class BaseLoader:
 
 
 def build_number_from_build_string(build_string: str) -> int:
-    "Assume the build number is a underscore-separated, all-digit substring in build_string"
+    "Assume build number is underscore-separated, all-digit substring in build_string"
     return int(
         next(
             (
