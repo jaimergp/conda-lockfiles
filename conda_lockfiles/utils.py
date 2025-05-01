@@ -18,20 +18,6 @@ from ruamel.yaml import YAML
 yaml = YAML(typ="safe")
 
 
-def build_number_from_build_string(build_string: str) -> int:
-    "Assume the build number is a underscore-separated, all-digit substring in build_string"
-    return int(
-        next(
-            (
-                part
-                for part in build_string.split("_")
-                if all(digit.isdigit() for digit in part)
-            ),
-            0,
-        )
-    )
-
-
 def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedProcess:
     if not pypi_records:
         return

@@ -9,8 +9,7 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
-from ..utils import build_number_from_build_string
-from .base import BaseLoader
+from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
     from typing import Any

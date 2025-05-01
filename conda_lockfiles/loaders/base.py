@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -8,8 +7,10 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from typing import Any
     from collections.abc import Iterable
+
 
 class BaseLoader:
     def __init__(self, path: str | Path):
@@ -26,3 +27,17 @@ class BaseLoader:
         platform: str = context.subdir,
     ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
         raise NotImplementedError
+
+
+def build_number_from_build_string(build_string: str) -> int:
+    "Assume the build number is a underscore-separated, all-digit substring in build_string"
+    return int(
+        next(
+            (
+                part
+                for part in build_string.split("_")
+                if all(digit.isdigit() for digit in part)
+            ),
+            0,
+        )
+    )
