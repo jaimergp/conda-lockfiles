@@ -108,3 +108,23 @@ exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
 [tool.coverage.run]
 source = ["conda_lockfiles/", "tests/"]
 omit = ["conda_lockfiles/__init__.py"]
+
+[tool.ruff]
+target-version = "py39"
+
+[tool.ruff.lint]
+flake8-type-checking = {exempt-modules = [], strict = true}
+# see https://docs.astral.sh/ruff/rules/
+select = [
+  # "D1",  # pydocstyle
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+  "FA",  # flake8-future-annotations
+  "I",  # isort
+  "ISC",  # flake8-implicit-str-concat
+  "RUF100",  # Unused noqa directive
+  "T10",  # flake8-debugger
+  "TCH",  # flake8-type-checking
+  "UP",  # pyupgrade
+  "W",  # pycodestyle warnings
+]
