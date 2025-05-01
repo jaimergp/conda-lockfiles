@@ -7,7 +7,7 @@ from conda.base.context import context
 from conda.misc import explicit
 
 from .exceptions import LockfileFormatNotSupported
-from .lockfiles import LOADERS
+from .loaders import LOADERS
 from .utils import as_explicit, install_pypi_records
 
 if TYPE_CHECKING:
