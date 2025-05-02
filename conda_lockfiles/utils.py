@@ -38,10 +38,7 @@ def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedP
     with NamedTemporaryFile("w", delete=False) as f:
         f.write("\n".join(pypi_records))
 
-    if executable := which("uv"):
-        command = [executable]
-    else:
-        command = [sys.executable, "-m"]
+    command = [sys.executable, "-m"]
     if on_win:
         python_exe = os.path.join(prefix, "python.exe")
     else:
