@@ -9,30 +9,13 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
-from .utils import build_number_from_build_string
+from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
-    from typing import Any
     from collections.abc import Iterable
+    from typing import Any
 
 yaml = YAML(typ="safe")
-
-
-class BaseLoader:
-    def __init__(self, path: str | Path):
-        self.path = Path(path)
-        self.data = self._load(path)
-
-    @classmethod
-    def supports(cls, path: str | Path) -> bool:
-        raise NotImplementedError
-
-    def to_conda_and_pypi(
-        self,
-        environment: str | None = None,
-        platform: str = context.subdir,
-    ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
-        raise NotImplementedError
 
 
 class PixiLoader(BaseLoader):
@@ -65,8 +48,8 @@ class PixiLoader(BaseLoader):
         packages = env["packages"].get(platform)
         if not packages:
             raise ValueError(
-                f"Environment {environment} does not list packages for platform {platform}. "
-                f"Available platforms: {sorted(env['packages'])}."
+                f"Environment {environment} does not list packages for platform "
+                f"{platform}. Available platforms: {sorted(env['packages'])}."
             )
 
         conda, pypi = [], []
@@ -111,6 +94,3 @@ class PixiLoader(BaseLoader):
                 record_fields["url"] = record_fields.pop("conda", None)
                 break
         return PackageRecord(**record_fields)
-
-
-LOADERS = (PixiLoader,)

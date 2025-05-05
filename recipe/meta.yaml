@@ -32,7 +32,7 @@ test:
     - python 3.9
   imports:
     - conda_lockfiles
-    - conda_lockfiles.main
+    - conda_lockfiles.create
   commands:
     - conda lockfiles --help
 

@@ -6,7 +6,6 @@ ci:
 exclude: |
   (?x)^(
     tests/data/.* |
-    conda_pypi/data/.* |
     pixi.lock
   )$
 repos:

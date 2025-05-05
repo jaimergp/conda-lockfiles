@@ -3,33 +3,48 @@ from __future__ import annotations
 import os
 import sys
 from shutil import which
-from subprocess import run, CompletedProcess
+from subprocess import run
 from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING
 
+from conda.base.context import context
+from conda.common.compat import on_win
+from conda.misc import explicit
+from conda.models.prefix_graph import PrefixGraph
+
+from .exceptions import LockfileFormatNotSupported
+from .loaders import LOADERS
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
+    from pathlib import Path
+    from subprocess import CompletedProcess
 
-from conda.common.compat import on_win
-from conda.models.records import PackageRecord
-from conda.models.prefix_graph import PrefixGraph
-from ruamel.yaml import YAML
-
-yaml = YAML(typ="safe")
+    from conda.common.path import PathType
+    from conda.models.records import PackageRecord
 
 
-def build_number_from_build_string(build_string: str) -> int:
-    "Assume the build number is a underscore-separated, all-digit substring in build_string"
-    return int(
-        next(
-            (
-                part
-                for part in build_string.split("_")
-                if all(digit.isdigit() for digit in part)
-            ),
-            0,
-        )
-    )
+def create_environment_from_lockfile(
+    lockfile: PathType | Path,
+    prefix: PathType | Path,
+    environment: str | None = None,
+    platform: str = context.subdir,
+    verbose: bool = True,
+) -> None:
+    for Loader in LOADERS:
+        if Loader.supports(lockfile):
+            break
+    else:
+        raise LockfileFormatNotSupported(lockfile)
+
+    loader = Loader(lockfile)
+    conda, pypi = loader.to_conda_and_pypi(environment=environment, platform=platform)
+
+    explicit(as_explicit(conda), prefix)
+    if pypi:
+        if verbose:
+            print("Installing PyPI packages:")
+        install_pypi_records(pypi, prefix)
 
 
 def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedProcess:

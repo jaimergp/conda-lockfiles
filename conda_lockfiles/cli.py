@@ -1,10 +1,13 @@
 """
-conda pip subcommand for CLI
+conda lockfiles subcommand for CLI
 """
 
 from __future__ import annotations
 
-import argparse
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
 
 
 def configure_parser(parser: argparse.ArgumentParser):
@@ -31,7 +34,8 @@ def configure_parser(parser: argparse.ArgumentParser):
 
 def execute(args: argparse.Namespace) -> int:
     from conda.base.context import context, determine_target_prefix
-    from .main import create_environment_from_lockfile
+
+    from .create import create_environment_from_lockfile
 
     prefix = determine_target_prefix(context, args)
     create_environment_from_lockfile(
