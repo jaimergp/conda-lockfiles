@@ -1,5 +1,7 @@
 """
-conda go: activate conda environments in new shell processes.
+conda lockfiles: create conda environments from different lockfiles.
 """
 
-from .main import create_environment_from_lockfile  # noqa
+from .create import create_environment_from_lockfile
+
+__all__ = ["create_environment_from_lockfile"]
