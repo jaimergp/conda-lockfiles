@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import sys
-from shutil import which
 from subprocess import run
 from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING
