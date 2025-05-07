@@ -8,16 +8,17 @@ from conda.base.context import context
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    from conda.common.path import PathType
     from conda.models.records import PackageRecord
 
 
 class BaseLoader:
-    def __init__(self, path: str | Path):
+    def __init__(self, path: PathType):
         self.path = Path(path)
         self.data = self._load(path)
 
     @classmethod
-    def supports(cls, path: str | Path) -> bool:
+    def supports(cls, path: PathType) -> bool:
         raise NotImplementedError
 
     def to_conda_and_pypi(

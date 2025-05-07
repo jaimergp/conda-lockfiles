@@ -15,12 +15,14 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Any
 
+    from conda.common.path import PathType
+
 yaml = YAML(typ="safe")
 
 
 class PixiLoader(BaseLoader):
     @classmethod
-    def supports(cls, path: str | Path) -> bool:
+    def supports(cls, path: PathType) -> bool:
         path = Path(path)
         if path.name != "pixi.lock":
             return False
@@ -30,7 +32,7 @@ class PixiLoader(BaseLoader):
         return True
 
     @staticmethod
-    def _load(path) -> dict[str, Any]:
+    def _load(path: PathType) -> dict[str, Any]:
         with open(path) as f:
             return yaml.load(f)
 
