@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from typing import Any
 
     from conda.common.path import PathType
@@ -33,7 +32,7 @@ class BaseLoader(ABC):
         self,
         environment: str | None = None,
         platform: str = context.subdir,
-    ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
+    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
         raise NotImplementedError
 
 

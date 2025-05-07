@@ -12,7 +12,6 @@ from ruamel.yaml import YAML
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from typing import Any
 
     from conda.common.path import PathType
@@ -40,7 +39,7 @@ class PixiLoader(BaseLoader):
         self,
         environment: str = "default",
         platform: str = context.subdir,
-    ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
+    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
         env = self.data["environments"].get(environment)
         if not env:
             raise ValueError(
@@ -62,7 +61,7 @@ class PixiLoader(BaseLoader):
                 elif package_type == "pypi":
                     pypi.append(url)
 
-        return conda, pypi
+        return tuple(conda), tuple(pypi)
 
     def _package_record_from_conda_url(self, url: str) -> PackageRecord:
         channel, subdir, filename = url.rsplit("/", 2)
