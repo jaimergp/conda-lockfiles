@@ -16,7 +16,6 @@ def configure_parser(parser: argparse.ArgumentParser):
 
     from ..export import LOCKFILE_FORMATS
 
-    parser.prog = "conda lockfiles-from-env"
     add_parser_prefix(parser, True)
     parser.add_argument(
         "-f",
@@ -31,6 +30,7 @@ def configure_parser(parser: argparse.ArgumentParser):
         choices=LOCKFILE_FORMATS.keys(),
         help="Lockfile format to create.",
     )
+    parser.set_defaults(func=execute)
 
 
 def execute(args: argparse.Namespace) -> int:

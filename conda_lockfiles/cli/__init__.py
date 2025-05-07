@@ -22,4 +22,5 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
 
 
 def execute(args: argparse.Namespace) -> int:
+    args.func(args)
     return 0
