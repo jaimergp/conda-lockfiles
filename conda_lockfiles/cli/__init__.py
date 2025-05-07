@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 def configure_parser(parser: argparse.ArgumentParser) -> None:
     from .main_create import configure_parser as configure_parser_create
+    from .main_export import configure_parser as configure_parser_export
 
     subparsers = parser.add_subparsers(
         title="subcommand",
@@ -17,6 +18,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
     configure_parser_create(subparsers.add_parser("create"))
+    configure_parser_export(subparsers.add_parser("export"))
 
 
 def execute(args: argparse.Namespace) -> int:
