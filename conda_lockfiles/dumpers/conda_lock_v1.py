@@ -49,7 +49,7 @@ def export_to_conda_lock_v1(prefix: str, lockfile_path: Optional[str]) -> None:
         _record_to_conda_lock_v1_package(p, context.subdir)
         for p in prefix_data.iter_records()
     ]
-    channel_urls = set((p.schannel) for p in prefix_data.iter_records())
+    channel_urls = {(p.schannel) for p in prefix_data.iter_records()}
     metadata = {
         "content_hash": {},
         "channels": [{"url": url, "used_env_vars": []} for url in channel_urls],
