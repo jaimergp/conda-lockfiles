@@ -71,7 +71,7 @@ LOCKFILE_FORMATS: dict[str, callable] = {
 }
 
 
-def export_env_to_lockfile(
+def export_environment_to_lockfile(
     lockfile_format: str, prefix: str, lockfile_path: Optional[str]
 ) -> None:
     if lockfile_format not in LOCKFILE_FORMATS:
