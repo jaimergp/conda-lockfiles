@@ -67,13 +67,14 @@ sphinx-sitemap = "*"
 sphinxcontrib-programoutput = "*"
 
 [tool.pixi.feature.test.tasks]
-test = 'python -m pytest -vvv'
+test = 'python -m pytest --cov=conda_lockfiles'
 pre-commit = 'pre-commit'
 
 [tool.pixi.feature.test.dependencies]
 pytest = "7.4.3.*"
 pytest-mock = "3.12.0.*"
 pre-commit = "*"
+pytest-cov = ">=6.1.1,<7"
 
 [tool.pixi.feature.py39.dependencies]
 python = "3.9.*"
@@ -104,10 +105,21 @@ version-file = "conda_lockfiles/_version.py"
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
+omit = ["conda_lockfiles/_version.py"]
 
-[tool.coverage.run]
-source = ["conda_lockfiles/", "tests/"]
-omit = ["conda_lockfiles/__init__.py"]
+[tool.pytest.ini_options]
+addopts = [
+  "--color=yes",
+  # "--cov=conda_lockfiles",   # passed in test runner scripts instead (avoid debugger)
+  "--cov-append",
+  "--cov-branch",
+  "--cov-report=term",  # print summary table to screen
+  "--cov-report=xml",  # for codecov/codecov-action upload
+  "--durations=16",  # show 16 slowest tests
+  "--strict-markers",
+  "--tb=native",
+  "-vv",
+]
 
 [tool.ruff]
 target-version = "py39"
