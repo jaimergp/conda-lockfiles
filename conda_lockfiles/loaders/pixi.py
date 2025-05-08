@@ -25,6 +25,8 @@ class PixiLoader(BaseLoader):
         path = Path(path)
         if path.name != "pixi.lock":
             return False
+        if not path.exists():
+            return False
         data = cls._load(path)
         if data["version"] != 6:
             return False
