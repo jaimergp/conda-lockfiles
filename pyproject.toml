@@ -106,6 +106,9 @@ version-file = "conda_lockfiles/_version.py"
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
 omit = ["conda_lockfiles/_version.py"]
+show_missing = true
+skip_covered = true
+sort = "Miss"
 
 [tool.pytest.ini_options]
 addopts = [
