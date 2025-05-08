@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+import datetime
 from contextlib import nullcontext
 import sys
 
@@ -54,7 +55,15 @@ def export_to_conda_lock_v1(prefix: str, lockfile_path: Optional[str]) -> None:
         "content_hash": {},
         "channels": [{"url": url, "used_env_vars": []} for url in channel_urls],
         "platforms": [context.subdir],
-        "sources": [],
+        "sources": [""],
+        "time_metadata": {
+            "created_at": datetime.datetime.now(datetime.timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            ),
+        },
+        "custom_metadata": {
+            "created_by": "conda-lockfiles",
+        },
     }
     output = {
         "version": 1,
