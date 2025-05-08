@@ -8,7 +8,9 @@ if TYPE_CHECKING:
 
 def configure_parser(parser: argparse.ArgumentParser) -> None:
     from .. import APP_NAME, APP_VERSION
+    from .main_create import HELP as CREATE_HELP
     from .main_create import configure_parser as configure_parser_create
+    from .main_export import HELP as EXPORT_HELP
     from .main_export import configure_parser as configure_parser_export
 
     # conda lockfiles --version
@@ -21,16 +23,14 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
     subparsers = parser.add_subparsers(
-        title="subcommand",
-        description="The following subcommands are available.",
-        dest="cmd",
+        title="subcommands",
+        dest="subcommand",
         required=True,
     )
 
-    configure_parser_create(subparsers.add_parser("create"))
-    configure_parser_export(subparsers.add_parser("export"))
+    configure_parser_create(subparsers.add_parser("create", help=CREATE_HELP))
+    configure_parser_export(subparsers.add_parser("export", help=EXPORT_HELP))
 
 
 def execute(args: argparse.Namespace) -> int:
-    args.func(args)
-    return 0
+    return args.func(args)

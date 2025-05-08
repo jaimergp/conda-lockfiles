@@ -9,11 +9,15 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import argparse
 
+HELP = "Export a conda environment to a lock file."
+
 
 def configure_parser(parser: argparse.ArgumentParser):
     from conda.cli.helpers import add_parser_prefix
 
     from ..export import LOCKFILE_FORMATS
+
+    parser.description = HELP
 
     add_parser_prefix(parser, True)
     parser.add_argument(
@@ -28,6 +32,7 @@ def configure_parser(parser: argparse.ArgumentParser):
         dest="lockfile_format",
         choices=LOCKFILE_FORMATS.keys(),
         help="Lockfile format to create.",
+        required=True,
     )
     parser.set_defaults(func=execute)
 
