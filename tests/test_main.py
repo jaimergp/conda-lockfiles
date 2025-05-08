@@ -4,7 +4,6 @@ def test_cli_lockfiles_help(conda_cli):
 
 
 def test_cli_lockfiles_create_help(conda_cli):
-    conda_cli("lockfiles", "create", "--help", raises=SystemExit)
     _, _, exception = conda_cli("lockfiles", "create", "--help", raises=SystemExit)
     assert exception.value.code == 0
 
