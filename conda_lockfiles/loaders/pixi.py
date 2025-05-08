@@ -12,15 +12,16 @@ from ruamel.yaml import YAML
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from typing import Any
+
+    from conda.common.path import PathType
 
 yaml = YAML(typ="safe")
 
 
 class PixiLoader(BaseLoader):
     @classmethod
-    def supports(cls, path: str | Path) -> bool:
+    def supports(cls, path: PathType) -> bool:
         path = Path(path)
         if path.name != "pixi.lock":
             return False
@@ -30,7 +31,7 @@ class PixiLoader(BaseLoader):
         return True
 
     @staticmethod
-    def _load(path) -> dict[str, Any]:
+    def _load(path: PathType) -> dict[str, Any]:
         with open(path) as f:
             return yaml.load(f)
 
@@ -38,7 +39,7 @@ class PixiLoader(BaseLoader):
         self,
         environment: str = "default",
         platform: str = context.subdir,
-    ) -> tuple[Iterable[PackageRecord], Iterable[str]]:
+    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
         env = self.data["environments"].get(environment)
         if not env:
             raise ValueError(
@@ -60,7 +61,7 @@ class PixiLoader(BaseLoader):
                 elif package_type == "pypi":
                     pypi.append(url)
 
-        return conda, pypi
+        return tuple(conda), tuple(pypi)
 
     def _package_record_from_conda_url(self, url: str) -> PackageRecord:
         channel, subdir, filename = url.rsplit("/", 2)
