@@ -1,0 +1,11 @@
+[workspace]
+authors = ["Ken Odegard <kodegard@anaconda.com>"]
+channels = ["../channel"]
+name = "pixi"
+platforms = ["noarch"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+dependent = ">=1.0,<2"
