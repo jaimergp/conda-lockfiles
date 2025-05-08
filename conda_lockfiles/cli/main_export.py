@@ -33,14 +33,13 @@ def configure_parser(parser: argparse.ArgumentParser):
 
 
 def execute(args: argparse.Namespace) -> int:
-    from conda.base.context import context, determine_target_prefix
+    from conda.base.context import context
 
     from ..export import export_environment_to_lockfile
 
-    prefix = determine_target_prefix(context, args)
     export_environment_to_lockfile(
         args.lockfile_format,
-        prefix,
+        context.target_prefix,
         args.lockfile_path,
     )
     return 0
