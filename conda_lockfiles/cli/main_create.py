@@ -30,6 +30,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
         default=context.subdir,
         help="Target platform",
     )
+    parser.set_defaults(func=execute)
 
 
 def execute(args: argparse.Namespace) -> int:
