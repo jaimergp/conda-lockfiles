@@ -1,19 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import datetime
-from contextlib import nullcontext
 import sys
+from contextlib import nullcontext
+from typing import TYPE_CHECKING
 
 from conda.base.context import context
 from conda.core.prefix_data import PrefixData
 from conda.models.match_spec import MatchSpec
-
 from ruamel.yaml import YAML
 
-
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any
 
     from conda.models.records import PackageRecord
 
@@ -44,7 +42,7 @@ def _record_to_conda_lock_v1_package(
     }
 
 
-def export_to_conda_lock_v1(prefix: str, lockfile_path: Optional[str]) -> None:
+def export_to_conda_lock_v1(prefix: str, lockfile_path: str | None) -> None:
     prefix_data = PrefixData(prefix)
     packages = [
         _record_to_conda_lock_v1_package(p, context.subdir)

@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 
 def configure_parser(parser: argparse.ArgumentParser):
-    from conda.base.context import context
     from conda.cli.helpers import add_parser_prefix
 
     from ..export import LOCKFILE_FORMATS
@@ -35,6 +34,7 @@ def configure_parser(parser: argparse.ArgumentParser):
 
 def execute(args: argparse.Namespace) -> int:
     from conda.base.context import context, determine_target_prefix
+
     from ..export import export_environment_to_lockfile
 
     prefix = determine_target_prefix(context, args)
