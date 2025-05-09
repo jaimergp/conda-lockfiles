@@ -19,7 +19,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.description = HELP
 
     add_parser_prefix(parser, True)
-    parser.add_argument("path", help="Path to pixi.lock file")
+    parser.add_argument("path", help="Path to lockfile")
     parser.add_argument(
         "-e",
         "--environment",
