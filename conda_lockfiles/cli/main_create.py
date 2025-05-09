@@ -9,10 +9,14 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import argparse
 
+HELP = "Create a conda environment from a lock file."
+
 
 def configure_parser(parser: argparse.ArgumentParser) -> None:
     from conda.base.context import context
     from conda.cli.helpers import add_parser_prefix
+
+    parser.description = HELP
 
     add_parser_prefix(parser, True)
     parser.add_argument("path", help="Path to pixi.lock file")
