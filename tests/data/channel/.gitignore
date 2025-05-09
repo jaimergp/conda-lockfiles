@@ -1,0 +1,16 @@
+# ignore everything
+*
+
+# keep .gitignore
+!.gitignore
+
+# keep noarch
+!noarch/
+
+# keep packages
+!*.tar.bz2
+!*.conda
+
+# keep repodata.json
+!repodata.json
+!repodata.json.bz2

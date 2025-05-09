@@ -5,7 +5,7 @@ ci:
 # TODO: Restore index and solver exclude lines before merge
 exclude: |
   (?x)^(
-    tests/data/.* |
+    tests/data/pixi |
     pixi.lock
   )$
 repos:
@@ -22,10 +22,15 @@ repos:
       - id: check-yaml
         exclude: |
           (?x)^(
-            (conda\.)?recipe/meta.yaml
+            (conda\.)?recipe/meta.yaml |
+            tests/data/recipes/dependent/meta.yaml
           )
       # catch git merge/rebase problems
       - id: check-merge-conflict
+      # format repodata.json
+      - id: pretty-format-json
+        args: [--autofix]
+        files: repodata\.json
   - repo: https://github.com/adamchainz/blacken-docs
     rev: 1.19.1
     hooks:

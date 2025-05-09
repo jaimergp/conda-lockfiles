@@ -23,7 +23,7 @@ class PixiLoader(BaseLoader):
     @classmethod
     def supports(cls, path: PathType) -> bool:
         path = Path(path)
-        if path.name != "pixi.lock":
+        if path.name != "pixi.lock" or not path.exists():
             return False
         data = cls._load(path)
         if data["version"] != 6:
