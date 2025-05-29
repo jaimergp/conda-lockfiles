@@ -8,3 +8,4 @@ RECIPES_DIR = DATA_DIR / "recipes"
 
 # lockfiles
 PIXI_DIR = DATA_DIR / "pixi"
+PIXI_METADATA_DIR = DATA_DIR / "pixi-metadata"
