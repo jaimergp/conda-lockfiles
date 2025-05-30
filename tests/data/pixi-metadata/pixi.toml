@@ -1,0 +1,11 @@
+[workspace]
+authors = ["Jonathan Helmus <jjhelmus@gmail.com>"]
+channels = ["conda-forge"]
+name = "pixi-metadata"
+platforms = ["osx-arm64", "linux-64", "win-64", "osx-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+tzdata = ">=2025b,<2026a"

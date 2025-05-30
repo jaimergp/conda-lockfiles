@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 
 from conda.base.context import context
 from conda.common.compat import on_win
-from conda.misc import explicit
+from conda.core.link import PrefixSetup, UnlinkLinkTransaction
+from conda.core.prefix_data import PrefixData
 from conda.models.prefix_graph import PrefixGraph
 
 from .exceptions import LockfileFormatNotSupported
@@ -39,7 +40,7 @@ def create_environment_from_lockfile(
     loader = Loader(lockfile)
     conda, pypi = loader.to_conda_and_pypi(environment=environment, platform=platform)
 
-    explicit(as_explicit(conda), prefix)
+    install_conda_records(conda, prefix)
     if pypi:
         if verbose:
             print("Installing PyPI packages:")
@@ -75,12 +76,28 @@ def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedP
         os.unlink(f.name)
 
 
-def as_explicit(
-    records: Iterable[PackageRecord],
-    **comments,
-) -> Iterable[str]:
-    for key, value in comments.items():
-        yield f"# {key}: {value}"
-    yield "@EXPLICIT"
-    for record in dict.fromkeys(PrefixGraph(records).graph):
-        yield f"{record.url}#{record.sha256}"
+def install_conda_records(records: Iterable[PackageRecord], prefix: str) -> None:
+    unlink_precs: list[PackageRecord] = []
+    link_precs: list[PackageRecord] = []
+    prefix_data = PrefixData(prefix)
+    for record in PrefixGraph(records).graph:
+        installed_record = prefix_data.get(record.name, None)
+        if installed_record:
+            # If the record is already installed, do not re-linking it
+            if installed_record != record:
+                unlink_precs.append(installed_record)
+                link_precs.append(record)
+        else:
+            link_precs.append(record)
+    stp = PrefixSetup(
+        target_prefix=prefix,
+        unlink_precs=tuple(unlink_precs),
+        link_precs=tuple(link_precs),
+        remove_specs=(),
+        update_specs=(),
+        neutered_specs=(),
+    )
+    txn = UnlinkLinkTransaction(stp)
+    if not context.json and not context.quiet:
+        txn.print_transaction_summary()
+    txn.execute()
