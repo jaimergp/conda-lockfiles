@@ -70,7 +70,7 @@ class PixiLoader(BaseLoader):
             basename = filename[: -len(".tar.bz2")]
             ext = ".tar.bz2"
         elif filename.endswith(".conda"):
-            basename = filename[: -len("conda")]
+            basename = filename[: -len(".conda")]
             ext = ".conda"
         else:
             basename, ext = os.path.splitext(filename)
