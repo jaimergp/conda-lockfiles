@@ -1,0 +1,12 @@
+# input for conda lock
+# To create conda-lock.yml run:
+# conda lock lock --file environment.yaml
+channels:
+  - conda-forge
+dependencies:
+  - libsqlite
+platforms:
+  - osx-arm64
+  - osx-64
+  - linux-64
+  - win-64
