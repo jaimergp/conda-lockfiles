@@ -10,4 +10,3 @@ RECIPES_DIR = DATA_DIR / "recipes"
 PIXI_DIR = DATA_DIR / "pixi"
 PIXI_METADATA_DIR = DATA_DIR / "pixi-metadata"
 CONDA_LOCK_METADATA_DIR = DATA_DIR / "conda-lock-metadata"
-

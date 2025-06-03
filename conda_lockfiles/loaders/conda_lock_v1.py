@@ -69,7 +69,9 @@ class CondaLockV1Loader(BaseLoader):
     @staticmethod
     def _package_to_metadata(package: dict[str, Any]) -> CondaPackageMetadata:
         """Return conda record metadata from lockfile package metadata."""
-        depends = [f"{name} {spec}" for name, spec in package.get("dependencies", {}).items()]
+        depends = [
+            f"{name} {spec}" for name, spec in package.get("dependencies", {}).items()
+        ]
         checksums = {}
         hash_data = package.get("hash", {})
         for checksum_name in ["md5", "sha256"]:
