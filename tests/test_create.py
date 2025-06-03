@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from conda_lockfiles.create import create_environment_from_lockfile
 
-from . import PIXI_METADATA_DIR, CONDA_LOCK_METADATA_DIR
+from . import CONDA_LOCK_METADATA_DIR, PIXI_METADATA_DIR
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -35,4 +35,3 @@ def test_create_environment_from_lockfile_conda_lock_metadata(tmp_path: Path) ->
     data = json.loads(env_record_path.read_bytes())
     # package/repodata has .<2.0a0
     assert "libzlib >=1.3.1,<2.0a1" in data["depends"]
-
