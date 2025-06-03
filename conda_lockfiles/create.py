@@ -40,7 +40,7 @@ def create_environment_from_lockfile(
     loader = Loader(lockfile)
     conda, pypi = loader.to_conda_and_pypi(environment=environment, platform=platform)
 
-    install_conda_records(conda, prefix)
+    install_conda_records(conda, str(prefix))
     if pypi:
         if verbose:
             print("Installing PyPI packages:")
