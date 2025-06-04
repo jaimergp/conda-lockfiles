@@ -13,11 +13,19 @@ CondaPackageURL = str
 CondaPackageMetadata = dict[str, Any]
 
 
-def records_from_urls_and_metadata(
+def records_from_urls(
     metadata_by_url: dict[CondaPackageURL, CondaPackageMetadata],
     dry_run: bool = context.dry_run,
     download_only: bool = context.download_only,
 ) -> tuple[PackageRecord, ...]:
+    """
+    Return PackageRecords for a set of conda package URLs.
+
+    Any metadata specified for the url in `metadata_by_url` will be reflected
+    in the resulting PackageRecords. Any fields not specified is filled from
+    the package cache.
+
+    """
     fetch_specs = [
         MatchSpec(
             url, **{key: metadata[key] for key in ("md5", "sha256") if key in metadata}

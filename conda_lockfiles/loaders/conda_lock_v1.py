@@ -7,7 +7,7 @@ from conda.base.context import context
 from ruamel.yaml import YAML
 
 from .base import BaseLoader
-from .utils import records_from_urls_and_metadata
+from .utils import records_from_urls
 
 if TYPE_CHECKING:
     from typing import Any, Final
@@ -53,7 +53,7 @@ class CondaLockV1Loader(BaseLoader):
             )
 
         pypi = []
-        conda_pkgs: dict[CondaPackageURL, CondaPackageMetadata] = {}
+        conda_metadata_by_url: dict[CondaPackageURL, CondaPackageMetadata] = {}
         for package in self.data["package"]:
             if package["platform"] != platform:
                 continue
@@ -62,11 +62,13 @@ class CondaLockV1Loader(BaseLoader):
             if package["optional"]:
                 continue
             if package["manager"] == "conda":
-                conda_pkgs[package["url"]] = self._package_to_metadata(package)
+                conda_metadata_by_url[package["url"]] = self._package_to_metadata(
+                    package
+                )
             elif package["manager"] == "pip":
                 pypi.append(package["url"])
 
-        conda = records_from_urls_and_metadata(conda_pkgs)
+        conda = records_from_urls(conda_metadata_by_url)
         return conda, pypi
 
     @staticmethod

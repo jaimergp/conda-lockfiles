@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from conda_lockfiles.loaders.utils import records_from_urls_and_metadata
+from conda_lockfiles.loaders.utils import records_from_urls
 
 
 def test_records_from_urls_and_metadata() -> None:
@@ -15,7 +15,7 @@ def test_records_from_urls_and_metadata() -> None:
             "license": license,
         },
     }
-    records = records_from_urls_and_metadata(metadata_by_url)
+    records = records_from_urls(metadata_by_url)
     assert isinstance(records, tuple)
     assert len(records) == 1
     record = records[0]
