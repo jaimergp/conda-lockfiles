@@ -16,6 +16,7 @@ def test_records_from_urls_and_metadata() -> None:
         },
     }
     records = records_from_urls_and_metadata(metadata_by_url)
+    assert isinstance(records, tuple)
     assert len(records) == 1
     record = records[0]
     assert record.name == "tzdata"

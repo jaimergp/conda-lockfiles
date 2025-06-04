@@ -48,4 +48,4 @@ def records_from_urls_and_metadata(
                 **overrides,
             )
         )
-    return records
+    return tuple(records)
