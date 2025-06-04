@@ -1,4 +1,6 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from conda.base.context import context
 from conda.core.package_cache_data import PackageCacheData, ProgressiveFetchExtract
@@ -9,11 +11,14 @@ from conda.exceptions import (
 from conda.models.match_spec import MatchSpec
 from conda.models.records import PackageRecord
 
-CondaPackageURL = str
-CondaPackageMetadata = dict[str, Any]
+if TYPE_CHECKING:
+    from typing import Any
+
+    CondaPackageURL = str
+    CondaPackageMetadata = dict[str, Any]
 
 
-def records_from_urls(
+def records_from_conda_urls(
     metadata_by_url: dict[CondaPackageURL, CondaPackageMetadata],
     dry_run: bool = context.dry_run,
     download_only: bool = context.download_only,

@@ -7,6 +7,7 @@ import pytest
 from conda.common.compat import on_win
 
 from conda_lockfiles.create import create_environment_from_lockfile
+from conda_lockfiles.loaders.conda_lock_v1 import CONDA_LOCK_FILE
 
 from . import CONDA_LOCK_METADATA_DIR, PIXI_METADATA_DIR
 
@@ -33,7 +34,7 @@ def test_create_environment_from_lockfile_pixi_metadata(tmp_path: Path) -> None:
 )
 def test_create_environment_from_lockfile_conda_lock_metadata(tmp_path: Path) -> None:
     create_environment_from_lockfile(
-        CONDA_LOCK_METADATA_DIR / "conda-lock.yml",
+        CONDA_LOCK_METADATA_DIR / CONDA_LOCK_FILE,
         tmp_path,
         platform="linux-64",
     )

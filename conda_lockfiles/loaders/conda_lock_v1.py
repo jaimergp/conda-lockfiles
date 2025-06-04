@@ -7,7 +7,7 @@ from conda.base.context import context
 from ruamel.yaml import YAML
 
 from .base import BaseLoader
-from .records_from_urls import records_from_urls
+from .records_from_urls import records_from_conda_urls
 
 if TYPE_CHECKING:
     from typing import Any, Final
@@ -68,7 +68,7 @@ class CondaLockV1Loader(BaseLoader):
             elif package["manager"] == "pip":
                 pypi.append(package["url"])
 
-        conda = records_from_urls(conda_metadata_by_url)
+        conda = records_from_conda_urls(conda_metadata_by_url)
         return conda, pypi
 
     @staticmethod
