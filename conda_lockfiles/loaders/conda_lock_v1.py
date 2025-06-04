@@ -7,7 +7,7 @@ from conda.base.context import context
 from ruamel.yaml import YAML
 
 from .base import BaseLoader
-from .utils import records_from_urls
+from .records_from_urls import records_from_urls
 
 if TYPE_CHECKING:
     from typing import Any, Final
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from conda.common.path import PathType
     from conda.models.records import PackageRecord
 
-    from .utils import CondaPackageMetadata, CondaPackageURL
+    from .records_from_urls import CondaPackageMetadata, CondaPackageURL
 
 
 yaml = YAML(typ="safe")

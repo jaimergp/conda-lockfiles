@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from conda_lockfiles.loaders.utils import records_from_urls
+from conda_lockfiles.loaders.records_from_urls import records_from_urls
 
 
 def test_records_from_urls_and_metadata() -> None:
