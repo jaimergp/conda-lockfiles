@@ -10,7 +10,7 @@ from .base import BaseLoader
 from .utils import records_from_urls_and_metadata
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from conda.common.path import PathType
     from conda.models.records import PackageRecord
@@ -21,11 +21,14 @@ if TYPE_CHECKING:
 yaml = YAML(typ="safe")
 
 
+CONDA_LOCK_FILE: Final = "conda-lock.yml"
+
+
 class CondaLockV1Loader(BaseLoader):
     @classmethod
     def supports(cls, path: PathType) -> bool:
         path = Path(path)
-        if path.name != "conda-lock.yml" or not path.exists():
+        if path.name != CONDA_LOCK_FILE or not path.exists():
             return False
         data = cls._load(path)
         if data["version"] != 1:
