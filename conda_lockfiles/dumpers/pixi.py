@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from conda.base.context import context
 from conda.core.prefix_data import PrefixData
-from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
 if TYPE_CHECKING:
