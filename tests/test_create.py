@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import json
-import sys
 from typing import TYPE_CHECKING
 
 import pytest
+from conda.common.compat import on_win
 
 from conda_lockfiles.create import create_environment_from_lockfile
 
@@ -28,7 +28,7 @@ def test_create_environment_from_lockfile_pixi_metadata(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(
-    condition=sys.platform.startswith("win"),
+    condition=on_win,
     reason="linux environment creation is not supported on Windows",
 )
 def test_create_environment_from_lockfile_conda_lock_metadata(tmp_path: Path) -> None:
