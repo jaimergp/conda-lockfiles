@@ -45,10 +45,14 @@ def _record_to_pixi_v6_package(record: PackageRecord) -> dict[str, Any]:
 
 def export_to_pixi_v6(prefix: str, lockfile_path: str | None) -> None:
     prefix_data = PrefixData(prefix)
-    channel_urls = {(p.channel) for p in prefix_data.iter_records()}
+    channel_urls = {(record.channel) for record in prefix_data.iter_records()}
     channels = [{"url": str(url)} for url in channel_urls]
-    env_subdir_pkgs = [{"conda": str(p.url)} for p in prefix_data.iter_records()]
-    packages = [_record_to_pixi_v6_package(p) for p in prefix_data.iter_records()]
+    env_subdir_pkgs = [
+        {"conda": str(record.url)} for record in prefix_data.iter_records()
+    ]
+    packages = [
+        _record_to_pixi_v6_package(record) for record in prefix_data.iter_records()
+    ]
     environments = {
         "default": {
             "channels": channels,
