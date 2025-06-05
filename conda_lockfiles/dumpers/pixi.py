@@ -21,7 +21,7 @@ def _record_to_pixi_v6_package(record: PackageRecord) -> dict[str, Any]:
     # add relevent non-empty fields that rattler_lock includes in v6 lockfiles
     # https://github.com/conda/rattler/blob/rattler_lock-v0.23.5/crates/rattler_lock/src/parse/models/v6/conda_package_data.rs#L46
     fields = [
-        # name, version, ... have not been observed in lockfile produced by pixi
+        # channel, subdir, name, build and version can be decuded from the URL
         "sha256",
         "md5",
         "depends",
@@ -31,8 +31,9 @@ def _record_to_pixi_v6_package(record: PackageRecord) -> dict[str, Any]:
         "license",
         "license_family",
         "size",
-        # conda does not record the repodata timestamp in the environment records
-        # do not include this field
+        # libmamba-conda-solver record the repodata timestamp,
+        # do not include this field, see:
+        # https://github.com/conda/conda-libmamba-solver/issues/673
         # "timestamp",
         "python_site_packages_path",
     ]
