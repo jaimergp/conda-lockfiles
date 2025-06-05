@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def test_export_to_pixi_v6(tmp_path: Path) -> None:
-    lockfile_path = tmp_path / "pixi.lock"
+def test_export_to_conda_lock_v1(tmp_path: Path) -> None:
+    lockfile_path = tmp_path / "conda-lock.yml"
     conda_lock_v1.export_to_conda_lock_v1(str(SINGLE_PACKAGE_ENV), str(lockfile_path))
     assert lockfile_path.exists()
 
