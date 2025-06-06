@@ -86,5 +86,5 @@ class PixiLoader(BaseLoader):
 
     @staticmethod
     def _parse_package(url: str, package: dict[str, Any]) -> MatchSpec:
-        hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
+        hashes = subdict(package, ["md5", "sha256"])
         return MatchSpec(url, **hashes)

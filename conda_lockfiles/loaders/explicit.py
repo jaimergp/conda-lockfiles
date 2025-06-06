@@ -10,7 +10,7 @@ from conda.common.url import is_url, join_url, path_to_url
 from conda.exceptions import ParseError
 from conda.models.match_spec import MatchSpec
 
-from .base import BaseLoader
+from .base import BaseLoader, subdict
 
 if TYPE_CHECKING:
     from typing import Final
@@ -78,9 +78,5 @@ class ExplicitLoader(BaseLoader):
         url_p, fn = match.group("url_p"), match.group("fn")
         url = join_url(url_p, fn)
 
-        hashes = {}
-        if md5 := match.group("md5"):
-            hashes["md5"] = md5
-        if sha256 := match.group("sha256"):
-            hashes["sha256"] = sha256
+        hashes = subdict(match.groupdict(), ["md5", "sha256"])
         return MatchSpec(url, **hashes)
