@@ -131,7 +131,7 @@ def install_conda_records(
     for record in PrefixGraph(conda_records).graph:
         installed_record = prefix_data.get(record.name, None)
         if installed_record:
-            # record is already installed, do not re-linking it
+            # If the record is already installed, do not re-linking it
             if installed_record != record:
                 unlink_precs.append(installed_record)
                 link_precs.append(record)
