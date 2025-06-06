@@ -15,6 +15,7 @@ def test_export_to_explicit(tmp_path: Path) -> None:
     explicit.export_to_explicit(str(SINGLE_PACKAGE_ENV), str(lockfile_path))
     assert lockfile_path.exists()
     data = lockfile_path.read_text()
+    assert "specs: python_abi" in data
     assert (
         "https://conda.anaconda.org/conda-forge/noarch/python_abi-3.13-7_cp313.conda"
         in data
