@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
+    from .base import CondaSpecs_v2, PackageRecordOverrides, PypiSpecs
+
 yaml: Final = YAML(typ="safe")
 
 CONDA_LOCK_FILE: Final = "conda-lock.yml"
@@ -37,9 +39,9 @@ class CondaLockV1Loader(BaseLoader):
 
     def to_conda_and_pypi(
         self,
-        environment: str = "default",
+        environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[dict[MatchSpec, dict[str, Any]], tuple[str, ...]]:
+    ) -> tuple[CondaSpecs_v2, PypiSpecs]:
         platforms = self.data.get("metadata", {}).get("platforms")
         if platform not in platforms:
             raise ValueError(
@@ -47,7 +49,7 @@ class CondaLockV1Loader(BaseLoader):
                 f"Available platforms: {', '.join(sorted(platforms))}."
             )
 
-        conda: dict[MatchSpec, dict[str, Any]] = {}
+        conda: dict[MatchSpec, PackageRecordOverrides] = {}
         pypi: list[str] = []
         for package in self.data["package"]:
             if package.get("platform") != platform:

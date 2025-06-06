@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
+    from .base import CondaSpecs_v1, PypiSpecs
+
 yaml: Final = YAML(typ="safe")
 
 PIXI_LOCK_FILE: Final = "pixi.lock"
@@ -37,9 +39,9 @@ class PixiLoader(BaseLoader):
 
     def to_conda_and_pypi(
         self,
-        environment: str = "default",
+        environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[tuple[MatchSpec, ...], tuple[str, ...]]:
+    ) -> tuple[CondaSpecs_v1, PypiSpecs]:
         env = self.data.get("environments", {}).get(environment)
         if not env:
             raise ValueError(
