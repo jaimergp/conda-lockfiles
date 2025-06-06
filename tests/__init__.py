@@ -10,3 +10,8 @@ RECIPES_DIR = DATA_DIR / "recipes"
 PIXI_DIR = DATA_DIR / "pixi"
 PIXI_METADATA_DIR = DATA_DIR / "pixi-metadata"
 CONDA_LOCK_METADATA_DIR = DATA_DIR / "conda-lock-metadata"
+EXPLICIT_LOCK_DIR = DATA_DIR / "explicit"
+
+# Enviroments
+ENVIRONMENTS_DIR = DATA_DIR / "environments"
+SINGLE_PACKAGE_ENV = ENVIRONMENTS_DIR / "single_package"
