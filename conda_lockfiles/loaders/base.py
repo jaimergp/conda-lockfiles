@@ -7,10 +7,22 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 
 if TYPE_CHECKING:
-    from typing import Any
+    from collections.abc import Iterable, Mapping
+    from typing import Any, NotRequired, TypedDict, TypeVar
 
     from conda.common.path import PathType
-    from conda.models.records import PackageRecord
+    from conda.models.match_spec import MatchSpec
+
+    class PackageRecordOverrides(TypedDict):
+        depends: NotRequired[list[str]]
+        license: NotRequired[str]
+
+    CondaSpecs_v1 = tuple[MatchSpec, ...]
+    CondaSpecs_v2 = Mapping[MatchSpec, PackageRecordOverrides]
+    CondaSpecs = CondaSpecs_v1 | CondaSpecs_v2
+    PypiRecords = tuple[str, ...]
+
+    K = TypeVar("K", bound=str)
 
 
 class BaseLoader(ABC):
@@ -24,7 +36,7 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _load(self, path: PathType) -> dict[str, Any]:
+    def _load(self, path: PathType) -> Any:
         raise NotImplementedError
 
     @abstractmethod
@@ -32,19 +44,9 @@ class BaseLoader(ABC):
         self,
         environment: str | None = None,
         platform: str = context.subdir,
-    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
+    ) -> tuple[CondaSpecs, PypiRecords]:
         raise NotImplementedError
 
 
-def build_number_from_build_string(build_string: str) -> int:
-    "Assume build number is underscore-separated, all-digit substring in build_string"
-    return int(
-        next(
-            (
-                part
-                for part in build_string.split("_")
-                if all(digit.isdigit() for digit in part)
-            ),
-            0,
-        )
-    )
+def subdict(mapping: Mapping[str, Any], keys: Iterable[K]) -> dict[K, Any]:
+    return {key: mapping[key] for key in keys if key in mapping}
