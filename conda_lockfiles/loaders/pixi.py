@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecs_v1, PypiSpecs
+    from .base import CondaSpecs_v1, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 
@@ -41,7 +41,7 @@ class PixiLoader(BaseLoader):
         self,
         environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[CondaSpecs_v1, PypiSpecs]:
+    ) -> tuple[CondaSpecs_v1, PypiRecords]:
         env = self.data.get("environments", {}).get(environment)
         if not env:
             raise ValueError(

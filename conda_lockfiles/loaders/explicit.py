@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecs_v1, PypiSpecs
+    from .base import CondaSpecs_v1, PypiRecords
 
 
 URL_PAT: Final = re.compile(
@@ -49,7 +49,7 @@ class ExplicitLoader(BaseLoader):
         self,
         environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[CondaSpecs_v1, PypiSpecs]:
+    ) -> tuple[CondaSpecs_v1, PypiRecords]:
         conda = []
         for line in self.data:
             line = line.strip()

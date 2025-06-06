@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecs_v2, PackageRecordOverrides, PypiSpecs
+    from .base import CondaSpecs_v2, PackageRecordOverrides, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 
@@ -41,7 +41,7 @@ class CondaLockV1Loader(BaseLoader):
         self,
         environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[CondaSpecs_v2, PypiSpecs]:
+    ) -> tuple[CondaSpecs_v2, PypiRecords]:
         platforms = self.data.get("metadata", {}).get("platforms")
         if platform not in platforms:
             raise ValueError(

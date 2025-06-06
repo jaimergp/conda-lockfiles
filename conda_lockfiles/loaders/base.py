@@ -8,18 +8,19 @@ from conda.base.context import context
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
-    from typing import Any, TypedDict
+    from typing import Any, NotRequired, TypedDict
 
     from conda.common.path import PathType
     from conda.models.match_spec import MatchSpec
 
     class PackageRecordOverrides(TypedDict):
-        depends: list[str]
+        depends: NotRequired[list[str]]
+        license: NotRequired[str]
 
     CondaSpecs_v1 = tuple[MatchSpec, ...]
     CondaSpecs_v2 = Mapping[MatchSpec, PackageRecordOverrides]
     CondaSpecs = CondaSpecs_v1 | CondaSpecs_v2
-    PypiSpecs = tuple[str, ...]
+    PypiRecords = tuple[str, ...]
 
 
 class BaseLoader(ABC):
@@ -41,7 +42,7 @@ class BaseLoader(ABC):
         self,
         environment: str | None = None,
         platform: str = context.subdir,
-    ) -> tuple[CondaSpecs, PypiSpecs]:
+    ) -> tuple[CondaSpecs, PypiRecords]:
         raise NotImplementedError
 
 

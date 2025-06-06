@@ -20,13 +20,14 @@ from .exceptions import LockfileFormatNotSupported
 from .loaders import LOADERS
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from pathlib import Path
     from subprocess import CompletedProcess
-    from typing import Any
 
     from conda.common.path import PathType
-    from conda.models.match_spec import MatchSpec
+
+    from .loaders.base import CondaSpecs, PypiRecords
+
+    CondaRecords = tuple[PackageRecord, ...]
 
 
 def create_environment_from_lockfile(
@@ -69,7 +70,7 @@ def create_environment_from_lockfile(
 
 
 def install_pypi_records(
-    pypi_records: Iterable[str],
+    pypi_records: PypiRecords,
     prefix: PathType | Path,
 ) -> CompletedProcess:
     with NamedTemporaryFile("w", delete=False) as f:
@@ -98,12 +99,10 @@ def install_pypi_records(
         os.unlink(f.name)
 
 
-def lookup_conda_records(
-    conda_specs: Iterable[MatchSpec] | Mapping[MatchSpec, dict[str, Any]],
-) -> tuple[PackageRecord, ...]:
+def lookup_conda_records(conda_specs: CondaSpecs) -> CondaRecords:
     # normalize specs to a mapping
     if not isinstance(conda_specs, Mapping):
-        conda_specs = dict.fromkeys(conda_specs)
+        conda_specs = {spec: {} for spec in conda_specs}
     conda_specs = dict(conda_specs)
 
     # populate package cache
@@ -116,14 +115,12 @@ def lookup_conda_records(
         cache_record = next(PackageCacheData.query_all(match_spec), None)
         if cache_record is None:
             raise AssertionError(f"Missing package cache record for: {match_spec}")
-        conda_records.append(
-            PackageRecord.from_objects(cache_record, **(overrides or {}))
-        )
+        conda_records.append(PackageRecord.from_objects(cache_record, **overrides))
     return tuple(conda_records)
 
 
 def install_conda_records(
-    conda_records: Iterable[PackageRecord],
+    conda_records: CondaRecords,
     prefix: PathType | Path,
     verbose: bool = False,
 ) -> None:
