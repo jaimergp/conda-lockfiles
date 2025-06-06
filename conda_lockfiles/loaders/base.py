@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from typing import Any
 
     from conda.common.path import PathType
@@ -36,15 +37,5 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
 
-def build_number_from_build_string(build_string: str) -> int:
-    "Assume build number is underscore-separated, all-digit substring in build_string"
-    return int(
-        next(
-            (
-                part
-                for part in build_string.split("_")
-                if all(digit.isdigit() for digit in part)
-            ),
-            0,
-        )
-    )
+def subdict(mapping: dict[str, Any], keys: Iterable[str]) -> dict[str, Any]:
+    return {key: mapping[key] for key in keys if key in mapping}

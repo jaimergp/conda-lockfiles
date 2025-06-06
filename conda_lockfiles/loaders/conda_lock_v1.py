@@ -4,22 +4,17 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from conda.base.context import context
+from conda.models.match_spec import MatchSpec
 from ruamel.yaml import YAML
 
-from .base import BaseLoader
-from .records_from_urls import records_from_conda_urls
+from .base import BaseLoader, subdict
 
 if TYPE_CHECKING:
     from typing import Any, Final
 
     from conda.common.path import PathType
-    from conda.models.records import PackageRecord
 
-    from .records_from_urls import CondaPackageMetadata, CondaPackageURL
-
-
-yaml = YAML(typ="safe")
-
+yaml: Final = YAML(typ="safe")
 
 CONDA_LOCK_FILE: Final = "conda-lock.yml"
 
@@ -44,48 +39,36 @@ class CondaLockV1Loader(BaseLoader):
         self,
         environment: str = "default",
         platform: str = context.subdir,
-    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
-        metadata = self.data["metadata"]
-        if platform not in metadata["platforms"]:
+    ) -> tuple[dict[MatchSpec, dict[str, Any]], tuple[str, ...]]:
+        platforms = self.data.get("metadata", {}).get("platforms")
+        if platform not in platforms:
             raise ValueError(
                 f"Lockfile does not list packages for platform {platform}. "
-                f"Available platforms: {sorted(metadata['platforms'])}."
+                f"Available platforms: {', '.join(sorted(platforms))}."
             )
 
-        pypi = []
-        conda_metadata_by_url: dict[CondaPackageURL, CondaPackageMetadata] = {}
+        conda: dict[MatchSpec, dict[str, Any]] = {}
+        pypi: list[str] = []
         for package in self.data["package"]:
-            if package["platform"] != platform:
+            if package.get("platform") != platform:
                 continue
-            if package["category"] != "main":
+            if package.get("category") != "main":
                 continue
-            if package["optional"]:
+            if package.get("optional"):
                 continue
-            if package["manager"] == "conda":
-                conda_metadata_by_url[package["url"]] = self._package_to_metadata(
-                    package
-                )
-            elif package["manager"] == "pip":
+
+            package_type = package.get("manager")
+            if package_type == "conda":
+                hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
+                conda[MatchSpec(package["url"], **hashes)] = {
+                    "depends": [
+                        f"{name} {spec}"
+                        for name, spec in package.get("dependencies", {}).items()
+                    ]
+                }
+            elif package_type == "pip":
                 pypi.append(package["url"])
+            else:
+                raise ValueError(f"Unknown package type: {package_type}")
 
-        conda = records_from_conda_urls(conda_metadata_by_url)
-        return conda, pypi
-
-    @staticmethod
-    def _package_to_metadata(package: dict[str, Any]) -> CondaPackageMetadata:
-        """Return conda record metadata from lockfile package metadata."""
-        depends = [
-            f"{name} {spec}" for name, spec in package.get("dependencies", {}).items()
-        ]
-        checksums = {}
-        hash_data = package.get("hash", {})
-        for checksum_name in ["md5", "sha256"]:
-            if checksum_name in hash_data:
-                checksums[checksum_name] = hash_data[checksum_name]
-        metadata = {
-            "name": package["name"],
-            "version": package["version"],
-            "depends": depends,
-            **checksums,
-        }
-        return metadata
+        return conda, tuple(pypi)

@@ -1,29 +1,29 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from conda.base.constants import KNOWN_SUBDIRS
 from conda.base.context import context
-from conda.models.records import PackageRecord
+from conda.models.match_spec import MatchSpec
 from ruamel.yaml import YAML
 
-from .base import BaseLoader, build_number_from_build_string
+from .base import BaseLoader, subdict
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from conda.common.path import PathType
 
-yaml = YAML(typ="safe")
+yaml: Final = YAML(typ="safe")
+
+PIXI_LOCK_FILE: Final = "pixi.lock"
 
 
 class PixiLoader(BaseLoader):
     @classmethod
     def supports(cls, path: PathType) -> bool:
         path = Path(path)
-        if path.name != "pixi.lock" or not path.exists():
+        if path.name != PIXI_LOCK_FILE or not path.exists():
             return False
         data = cls._load(path)
         if data["version"] != 6:
@@ -39,59 +39,45 @@ class PixiLoader(BaseLoader):
         self,
         environment: str = "default",
         platform: str = context.subdir,
-    ) -> tuple[tuple[PackageRecord, ...], tuple[str, ...]]:
-        env = self.data["environments"].get(environment)
+    ) -> tuple[tuple[MatchSpec, ...], tuple[str, ...]]:
+        env = self.data.get("environments", {}).get(environment)
         if not env:
             raise ValueError(
                 f"Environment {environment} not found. "
                 f"Available environment names: {sorted(self.data['environments'])}."
             )
-        packages = env["packages"].get(platform)
-        if not packages:
-            raise ValueError(
-                f"Environment {environment} does not list packages for platform "
-                f"{platform}. Available platforms: {sorted(env['packages'])}."
-            )
 
-        conda, pypi = [], []
+        platforms = env.get("packages", {})
+        if platform not in platforms:
+            raise ValueError(
+                f"Lockfile environment {environment} does not list packages for "
+                f"platform {platform}. "
+                f"Available platforms: {', '.join(sorted(platforms))}."
+            )
+        packages = platforms[platform]
+
+        metadatas = {}
+        for package in self.data.get("packages", []):
+            if "conda" in package:
+                metadatas[("conda", package["conda"])] = package
+            elif "pypi" in package:
+                metadatas[("pypi", package["pypi"])] = package
+            else:
+                raise ValueError(f"Unknown package type: {', '.join(sorted(package))}")
+
+        conda: list[MatchSpec] = []
+        pypi: list[str] = []
         for package in packages:
             for package_type, url in package.items():
+                if not (metadata := metadatas.get((package_type, url))):
+                    raise ValueError(f"Unknown package: {url}")
+
                 if package_type == "conda":
-                    conda.append(self._package_record_from_conda_url(url))
+                    hashes = subdict(metadata, ["md5", "sha256"])
+                    conda.append(MatchSpec(url, **hashes))
                 elif package_type == "pypi":
                     pypi.append(url)
+                else:
+                    raise ValueError(f"Unknown package type: {package_type}")
 
         return tuple(conda), tuple(pypi)
-
-    def _package_record_from_conda_url(self, url: str) -> PackageRecord:
-        channel, subdir, filename = url.rsplit("/", 2)
-        assert subdir in KNOWN_SUBDIRS, f"Unknown subdir '{subdir}' in package {url}."
-        if filename.endswith(".tar.bz2"):
-            basename = filename[: -len(".tar.bz2")]
-            ext = ".tar.bz2"
-        elif filename.endswith(".conda"):
-            basename = filename[: -len(".conda")]
-            ext = ".conda"
-        else:
-            basename, ext = os.path.splitext(filename)
-        assert ext.lower() in (
-            ".conda",
-            ".tar.bz2",
-        ), f"Unknown extension '{ext}' in package {url}."
-        name, version, build = basename.rsplit("-", 2)
-        build_number = build_number_from_build_string(build)
-        record_fields = {
-            "name": name,
-            "version": version,
-            "build": build,
-            "build_number": build_number,
-            "subdir": subdir,
-            "channel": channel,
-            "fn": filename,
-        }
-        for record in self.data["packages"]:
-            if record.get("conda", "") == url:
-                record_fields.update(record)
-                record_fields["url"] = record_fields.pop("conda", None)
-                break
-        return PackageRecord(**record_fields)

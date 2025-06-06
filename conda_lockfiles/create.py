@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Mapping
 from subprocess import run
 from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING
@@ -9,8 +10,11 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 from conda.common.compat import on_win
 from conda.core.link import PrefixSetup, UnlinkLinkTransaction
+from conda.core.package_cache_data import PackageCacheData, ProgressiveFetchExtract
 from conda.core.prefix_data import PrefixData
+from conda.exceptions import CondaExitZero, DryRunExit
 from conda.models.prefix_graph import PrefixGraph
+from conda.models.records import PackageRecord
 
 from .exceptions import LockfileFormatNotSupported
 from .loaders import LOADERS
@@ -19,9 +23,10 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
     from subprocess import CompletedProcess
+    from typing import Any
 
     from conda.common.path import PathType
-    from conda.models.records import PackageRecord
+    from conda.models.match_spec import MatchSpec
 
 
 def create_environment_from_lockfile(
@@ -29,7 +34,9 @@ def create_environment_from_lockfile(
     prefix: PathType | Path,
     environment: str | None = None,
     platform: str = context.subdir,
-    verbose: bool = True,
+    dry_run: bool = False,
+    download_only: bool = False,
+    verbose: bool = False,
 ) -> None:
     for Loader in LOADERS:
         if Loader.supports(lockfile):
@@ -40,18 +47,26 @@ def create_environment_from_lockfile(
     loader = Loader(lockfile)
     conda, pypi = loader.to_conda_and_pypi(environment=environment, platform=platform)
 
-    install_conda_records(conda, str(prefix))
+    if dry_run:
+        raise DryRunExit()
+
+    if conda:
+        if verbose:
+            print("Installing Conda packages:")
+        install_conda_records(conda, prefix, download_only, verbose)
+
     if pypi:
         if verbose:
             print("Installing PyPI packages:")
         install_pypi_records(pypi, prefix)
 
 
-def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedProcess:
-    if not pypi_records:
-        return
+def install_pypi_records(
+    urls: Iterable[str],
+    prefix: PathType | Path,
+) -> CompletedProcess:
     with NamedTemporaryFile("w", delete=False) as f:
-        f.write("\n".join(pypi_records))
+        f.write("\n".join(urls))
 
     if on_win:
         python_exe = os.path.join(prefix, "python.exe")
@@ -76,21 +91,50 @@ def install_pypi_records(pypi_records: Iterable[str], prefix: str) -> CompletedP
         os.unlink(f.name)
 
 
-def install_conda_records(records: Iterable[PackageRecord], prefix: str) -> None:
+def install_conda_records(
+    specs: Iterable[MatchSpec] | Mapping[MatchSpec, dict[str, Any]],
+    prefix: PathType | Path,
+    download_only: bool = False,
+    verbose: bool = False,
+) -> None:
+    if not isinstance(specs, Mapping):
+        specs = dict.fromkeys(specs)
+    specs = dict(specs)
+
+    # populate package cache
+    pfe = ProgressiveFetchExtract(specs.keys())
+    pfe.execute()
+
+    if download_only:
+        raise CondaExitZero(
+            "Package caches prepared. Installed cancelled with --download-only option."
+        )
+
+    # lookup records in package cache
+    records: list[PackageRecord] = []
+    for match_spec, overrides in specs.items():
+        cache_record = next(PackageCacheData.query_all(match_spec), None)
+        if cache_record is None:
+            raise AssertionError(f"Missing package cache record for: {match_spec}")
+        records.append(PackageRecord.from_objects(cache_record, **(overrides or {})))
+
+    # determine which packages need to be linked and unlinked
     unlink_precs: list[PackageRecord] = []
     link_precs: list[PackageRecord] = []
     prefix_data = PrefixData(prefix)
     for record in PrefixGraph(records).graph:
         installed_record = prefix_data.get(record.name, None)
         if installed_record:
-            # If the record is already installed, do not re-linking it
+            # record is already installed, do not re-linking it
             if installed_record != record:
                 unlink_precs.append(installed_record)
                 link_precs.append(record)
         else:
             link_precs.append(record)
+
+    # create and execute transaction
     stp = PrefixSetup(
-        target_prefix=prefix,
+        target_prefix=str(prefix),
         unlink_precs=tuple(unlink_precs),
         link_precs=tuple(link_precs),
         remove_specs=(),
@@ -98,6 +142,6 @@ def install_conda_records(records: Iterable[PackageRecord], prefix: str) -> None
         neutered_specs=(),
     )
     txn = UnlinkLinkTransaction(stp)
-    if not context.json and not context.quiet:
+    if verbose:
         txn.print_transaction_summary()
     txn.execute()
