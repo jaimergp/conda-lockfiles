@@ -8,7 +8,7 @@ from conda.base.context import context
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
-    from typing import Any, NotRequired, TypedDict
+    from typing import Any, NotRequired, TypedDict, TypeVar
 
     from conda.common.path import PathType
     from conda.models.match_spec import MatchSpec
@@ -21,6 +21,8 @@ if TYPE_CHECKING:
     CondaSpecs_v2 = Mapping[MatchSpec, PackageRecordOverrides]
     CondaSpecs = CondaSpecs_v1 | CondaSpecs_v2
     PypiRecords = tuple[str, ...]
+
+    K = TypeVar("K", bound=str)
 
 
 class BaseLoader(ABC):
@@ -46,5 +48,5 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
 
-def subdict(mapping: Mapping[str, Any], keys: Iterable[str]) -> dict[str, Any]:
+def subdict(mapping: Mapping[str, Any], keys: Iterable[K]) -> dict[K, Any]:
     return {key: mapping[key] for key in keys if key in mapping}

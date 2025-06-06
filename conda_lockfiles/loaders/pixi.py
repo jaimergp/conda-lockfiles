@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecs_v1, PypiRecords
+    from .base import CondaSpecs_v2, PackageRecordOverrides, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 
@@ -41,7 +41,7 @@ class PixiLoader(BaseLoader):
         self,
         environment: str | None = "default",
         platform: str = context.subdir,
-    ) -> tuple[CondaSpecs_v1, PypiRecords]:
+    ) -> tuple[CondaSpecs_v2, PypiRecords]:
         env = self.data.get("environments", {}).get(environment)
         if not env:
             raise ValueError(
@@ -67,7 +67,7 @@ class PixiLoader(BaseLoader):
             else:
                 raise ValueError(f"Unknown package type: {', '.join(sorted(package))}")
 
-        conda = []
+        conda = {}
         pypi = []
         for package in packages:
             for package_type, url in package.items():
@@ -75,16 +75,20 @@ class PixiLoader(BaseLoader):
                     raise ValueError(f"Unknown package: {url}")
 
                 if package_type == "conda":
-                    spec = self._parse_package(url, metadata)
-                    conda.append(spec)
+                    spec, overrides = self._parse_package(url, metadata)
+                    conda[spec] = overrides
                 elif package_type == "pypi":
                     pypi.append(url)
                 else:
                     raise ValueError(f"Unknown package type: {package_type}")
 
-        return tuple(conda), tuple(pypi)
+        return conda, tuple(pypi)
 
     @staticmethod
-    def _parse_package(url: str, package: dict[str, Any]) -> MatchSpec:
+    def _parse_package(
+        url: str,
+        package: dict[str, Any],
+    ) -> tuple[MatchSpec, PackageRecordOverrides]:
         hashes = subdict(package, ["md5", "sha256"])
-        return MatchSpec(url, **hashes)
+        overrides: PackageRecordOverrides = subdict(package, ["license"])  # type: ignore[assignment]
+        return MatchSpec(url, **hashes), overrides
