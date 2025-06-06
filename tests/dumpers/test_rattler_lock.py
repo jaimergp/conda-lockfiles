@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ruamel.yaml import YAML
 
-from conda_lockfiles.dumpers import pixi
+from conda_lockfiles.dumpers import rattler_lock
 
 from .. import SINGLE_PACKAGE_ENV
 
@@ -12,13 +12,13 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def test_export_to_pixi_v6(tmp_path: Path) -> None:
+def test_export_to_rattler_lock_v6(tmp_path: Path) -> None:
     package_url = (
         "https://conda.anaconda.org/conda-forge/noarch/python_abi-3.13-7_cp313.conda"
     )
 
     lockfile_path = tmp_path / "pixi.lock"
-    pixi.export_to_pixi_v6(str(SINGLE_PACKAGE_ENV), str(lockfile_path))
+    rattler_lock.export_to_rattler_lock_v6(str(SINGLE_PACKAGE_ENV), str(lockfile_path))
     assert lockfile_path.exists()
 
     data = YAML().load(lockfile_path)

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from conda.models.records import PackageRecord
 
 
-def _record_to_pixi_v6_package(record: PackageRecord) -> dict[str, Any]:
+def _record_to_rattler_lock_v6(record: PackageRecord) -> dict[str, Any]:
     package = {
         "conda": record.url,
     }
@@ -43,7 +43,7 @@ def _record_to_pixi_v6_package(record: PackageRecord) -> dict[str, Any]:
     return package
 
 
-def export_to_pixi_v6(prefix: str, lockfile_path: str | None) -> None:
+def export_to_rattler_lock_v6(prefix: str, lockfile_path: str | None) -> None:
     prefix_data = PrefixData(prefix)
     channel_urls = {(record.channel) for record in prefix_data.iter_records()}
     channels = [{"url": str(url)} for url in channel_urls]
@@ -51,7 +51,7 @@ def export_to_pixi_v6(prefix: str, lockfile_path: str | None) -> None:
         {"conda": str(record.url)} for record in prefix_data.iter_records()
     ]
     packages = [
-        _record_to_pixi_v6_package(record) for record in prefix_data.iter_records()
+        _record_to_rattler_lock_v6(record) for record in prefix_data.iter_records()
     ]
     environments = {
         "default": {
