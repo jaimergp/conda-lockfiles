@@ -12,13 +12,15 @@ from conda.history import History
 from .. import __version__
 
 
-def export_to_explicit(prefix: str, lockfile_path: str | None) -> None:
+def export_to_explicit(
+    prefix: str, lockfile_path: str | None, subdir: str = context.subdir
+) -> None:
     specs = History(prefix).get_requested_specs_map().values()
     with open(lockfile_path, "w") if lockfile_path else nullcontext(sys.stdout) as fh:
         # an opinionated and simplified version of conda.cli.main_list::print_explicit
         fh.write("# This file may be used to create an environment using:\n")
         fh.write("# $ conda create --name <env> --file <this file>\n")
-        fh.write(f"# platform: {context.subdir}\n")
+        fh.write(f"# platform: {subdir}\n")
         if specs:
             fh.write(f"# specs: {' '.join(str(spec) for spec in specs)}\n")
         fh.write(f"# created-by: conda-lockfiles {__version__}\n")

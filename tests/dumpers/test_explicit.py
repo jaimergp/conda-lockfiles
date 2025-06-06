@@ -12,9 +12,15 @@ if TYPE_CHECKING:
 
 def test_export_to_explicit(tmp_path: Path) -> None:
     lockfile_path = tmp_path / "explicit.txt"
-    explicit.export_to_explicit(str(SINGLE_PACKAGE_ENV), str(lockfile_path))
+    # subdir must be explicitly, normally this is determined from configuration files
+    # after the command line arguments for the environment in questions are parsed.
+    subdir = "linux-64"
+    explicit.export_to_explicit(
+        str(SINGLE_PACKAGE_ENV), str(lockfile_path), subdir=subdir
+    )
     assert lockfile_path.exists()
     data = lockfile_path.read_text()
+    assert subdir in data
     assert "specs: python_abi" in data
     assert (
         "https://conda.anaconda.org/conda-forge/noarch/python_abi-3.13-7_cp313.conda"
