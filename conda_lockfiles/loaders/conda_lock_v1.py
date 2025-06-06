@@ -49,8 +49,8 @@ class CondaLockV1Loader(BaseLoader):
                 f"Available platforms: {', '.join(sorted(platforms))}."
             )
 
-        conda: dict[MatchSpec, PackageRecordOverrides] = {}
-        pypi: list[str] = []
+        conda = {}
+        pypi = []
         for package in self.data["package"]:
             if package.get("platform") != platform:
                 continue
@@ -61,16 +61,25 @@ class CondaLockV1Loader(BaseLoader):
 
             package_type = package.get("manager")
             if package_type == "conda":
-                hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
-                conda[MatchSpec(package["url"], **hashes)] = {
-                    "depends": [
-                        f"{name} {spec}"
-                        for name, spec in package.get("dependencies", {}).items()
-                    ]
-                }
+                spec, overrides = self._parse_package(package)
+                conda[spec] = overrides
             elif package_type == "pip":
                 pypi.append(package["url"])
             else:
                 raise ValueError(f"Unknown package type: {package_type}")
 
         return conda, tuple(pypi)
+
+    @staticmethod
+    def _parse_package(
+        package: dict[str, Any],
+    ) -> tuple[MatchSpec, PackageRecordOverrides]:
+        url = package["url"]
+        hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
+        overrides: PackageRecordOverrides = {
+            "depends": [
+                f"{name} {spec}"
+                for name, spec in package.get("dependencies", {}).items()
+            ]
+        }
+        return MatchSpec(url, **hashes), overrides

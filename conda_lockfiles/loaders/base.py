@@ -33,7 +33,7 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _load(self, path: PathType) -> dict[str, Any]:
+    def _load(self, path: PathType) -> Any:
         raise NotImplementedError
 
     @abstractmethod

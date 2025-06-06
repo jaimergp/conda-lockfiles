@@ -67,19 +67,24 @@ class PixiLoader(BaseLoader):
             else:
                 raise ValueError(f"Unknown package type: {', '.join(sorted(package))}")
 
-        conda: list[MatchSpec] = []
-        pypi: list[str] = []
+        conda = []
+        pypi = []
         for package in packages:
             for package_type, url in package.items():
                 if not (metadata := metadatas.get((package_type, url))):
                     raise ValueError(f"Unknown package: {url}")
 
                 if package_type == "conda":
-                    hashes = subdict(metadata, ["md5", "sha256"])
-                    conda.append(MatchSpec(url, **hashes))
+                    spec = self._parse_package(url, metadata)
+                    conda.append(spec)
                 elif package_type == "pypi":
                     pypi.append(url)
                 else:
                     raise ValueError(f"Unknown package type: {package_type}")
 
         return tuple(conda), tuple(pypi)
+
+    @staticmethod
+    def _parse_package(url: str, package: dict[str, Any]) -> MatchSpec:
+        hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
+        return MatchSpec(url, **hashes)
