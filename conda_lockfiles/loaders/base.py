@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Mapping
     from typing import Any
 
     from conda.common.path import PathType
@@ -37,5 +37,5 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
 
-def subdict(mapping: dict[str, Any], keys: Iterable[str]) -> dict[str, Any]:
+def subdict(mapping: Mapping[str, Any], keys: Iterable[str]) -> dict[str, Any]:
     return {key: mapping[key] for key in keys if key in mapping}
