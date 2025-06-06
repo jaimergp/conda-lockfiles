@@ -69,11 +69,11 @@ def create_environment_from_lockfile(
 
 
 def install_pypi_records(
-    urls: Iterable[str],
+    pypi_records: Iterable[str],
     prefix: PathType | Path,
 ) -> CompletedProcess:
     with NamedTemporaryFile("w", delete=False) as f:
-        f.write("\n".join(urls))
+        f.write("\n".join(pypi_records))
 
     if on_win:
         python_exe = os.path.join(prefix, "python.exe")
@@ -99,35 +99,39 @@ def install_pypi_records(
 
 
 def lookup_conda_records(
-    specs: Iterable[MatchSpec] | Mapping[MatchSpec, dict[str, Any]],
+    conda_specs: Iterable[MatchSpec] | Mapping[MatchSpec, dict[str, Any]],
 ) -> tuple[PackageRecord, ...]:
     # normalize specs to a mapping
-    if not isinstance(specs, Mapping):
-        specs = dict.fromkeys(specs)
-    specs = dict(specs)
+    if not isinstance(conda_specs, Mapping):
+        conda_specs = dict.fromkeys(conda_specs)
+    conda_specs = dict(conda_specs)
 
     # populate package cache
-    pfe = ProgressiveFetchExtract(specs.keys())
+    pfe = ProgressiveFetchExtract(conda_specs.keys())
     pfe.execute()
 
     # lookup records in package cache
-    records: list[PackageRecord] = []
-    for match_spec, overrides in specs.items():
+    conda_records: list[PackageRecord] = []
+    for match_spec, overrides in conda_specs.items():
         cache_record = next(PackageCacheData.query_all(match_spec), None)
         if cache_record is None:
             raise AssertionError(f"Missing package cache record for: {match_spec}")
-        records.append(PackageRecord.from_objects(cache_record, **(overrides or {})))
-    return tuple(records)
+        conda_records.append(
+            PackageRecord.from_objects(cache_record, **(overrides or {}))
+        )
+    return tuple(conda_records)
 
 
 def install_conda_records(
-    records: Iterable[PackageRecord], prefix: PathType | Path, verbose: bool = False
+    conda_records: Iterable[PackageRecord],
+    prefix: PathType | Path,
+    verbose: bool = False,
 ) -> None:
     # determine which packages need to be linked and unlinked
     unlink_precs: list[PackageRecord] = []
     link_precs: list[PackageRecord] = []
     prefix_data = PrefixData(prefix)
-    for record in PrefixGraph(records).graph:
+    for record in PrefixGraph(conda_records).graph:
         installed_record = prefix_data.get(record.name, None)
         if installed_record:
             # record is already installed, do not re-linking it
