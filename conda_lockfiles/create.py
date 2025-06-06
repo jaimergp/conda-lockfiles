@@ -45,20 +45,27 @@ def create_environment_from_lockfile(
         raise LockfileFormatNotSupported(lockfile)
 
     loader = Loader(lockfile)
-    conda, pypi = loader.to_conda_and_pypi(environment=environment, platform=platform)
+    conda_specs, pypi_records = loader.to_conda_and_pypi(environment, platform)
 
     if dry_run:
         raise DryRunExit()
 
-    if conda:
+    if conda_specs:
         if verbose:
             print("Installing Conda packages:")
-        install_conda_records(conda, prefix, download_only, verbose)
+        conda_records = lookup_conda_records(conda_specs)
 
-    if pypi:
+        if download_only:
+            raise CondaExitZero(
+                "Package caches prepared. Installation cancelled with --download-only."
+            )
+
+        install_conda_records(conda_records, prefix, verbose)
+
+    if pypi_records:
         if verbose:
             print("Installing PyPI packages:")
-        install_pypi_records(pypi, prefix)
+        install_pypi_records(pypi_records, prefix)
 
 
 def install_pypi_records(
@@ -91,12 +98,10 @@ def install_pypi_records(
         os.unlink(f.name)
 
 
-def install_conda_records(
+def lookup_conda_records(
     specs: Iterable[MatchSpec] | Mapping[MatchSpec, dict[str, Any]],
-    prefix: PathType | Path,
-    download_only: bool = False,
-    verbose: bool = False,
-) -> None:
+) -> tuple[PackageRecord, ...]:
+    # normalize specs to a mapping
     if not isinstance(specs, Mapping):
         specs = dict.fromkeys(specs)
     specs = dict(specs)
@@ -105,11 +110,6 @@ def install_conda_records(
     pfe = ProgressiveFetchExtract(specs.keys())
     pfe.execute()
 
-    if download_only:
-        raise CondaExitZero(
-            "Package caches prepared. Installed cancelled with --download-only option."
-        )
-
     # lookup records in package cache
     records: list[PackageRecord] = []
     for match_spec, overrides in specs.items():
@@ -117,7 +117,12 @@ def install_conda_records(
         if cache_record is None:
             raise AssertionError(f"Missing package cache record for: {match_spec}")
         records.append(PackageRecord.from_objects(cache_record, **(overrides or {})))
+    return tuple(records)
 
+
+def install_conda_records(
+    records: Iterable[PackageRecord], prefix: PathType | Path, verbose: bool = False
+) -> None:
     # determine which packages need to be linked and unlinked
     unlink_precs: list[PackageRecord] = []
     link_precs: list[PackageRecord] = []
