@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from conda_lockfiles.loaders.explicit import ExplicitLoader
+from conda_lockfiles.loaders.explicit import EXPLICIT_KEY, ExplicitLoader
 
 from .. import EXPLICIT_LOCK_DIR
 
@@ -19,4 +19,4 @@ def test_explicit_loader_supports(tmp_path: Path) -> None:
 
 def test_explicit_loader_load() -> None:
     loader = ExplicitLoader(EXPLICIT_LOCK_DIR / "explicit.txt")
-    assert "@EXPLICIT" in loader.data
+    assert EXPLICIT_KEY in loader.data

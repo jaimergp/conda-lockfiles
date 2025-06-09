@@ -13,7 +13,7 @@ from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from conda.common.path import PathType
     from conda.models.records import PackageRecord
@@ -30,6 +30,8 @@ URL_PAT = re.compile(
     r"))?$"
 )
 
+EXPLICIT_KEY: Final = "@EXPLICIT"
+
 
 class ExplicitLoader(BaseLoader):
     @classmethod
@@ -38,7 +40,7 @@ class ExplicitLoader(BaseLoader):
         if not path.exists():
             return False
         data = cls._load(path)
-        if "@EXPLICIT" not in data:
+        if EXPLICIT_KEY not in data:
             return False
         return True
 
@@ -56,7 +58,7 @@ class ExplicitLoader(BaseLoader):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            if line == "@EXPLICIT":
+            if line == EXPLICIT_KEY:
                 continue
             url, metadata = self._parse_line(line)
             conda_metadata_by_url[url] = metadata
