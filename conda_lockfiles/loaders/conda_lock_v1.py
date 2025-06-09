@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 from ruamel.yaml import YAML
 
+from ..constants import CONDA_LOCK_FILE
 from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
@@ -19,9 +20,6 @@ if TYPE_CHECKING:
 
 
 yaml: Final = YAML(typ="safe")
-
-
-CONDA_LOCK_FILE: Final = "conda-lock.yml"
 
 
 class CondaLockV1Loader(BaseLoader):

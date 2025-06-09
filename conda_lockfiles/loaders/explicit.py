@@ -9,6 +9,7 @@ from conda.common.path import expand
 from conda.common.url import is_url, join_url, path_to_url
 from conda.exceptions import ParseError
 
+from ..constants import EXPLICIT_KEY
 from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
@@ -29,8 +30,6 @@ URL_PAT: Final = re.compile(
     r"|((sha256:)?(?P<sha256>[0-9a-f]{64}))"
     r"))?$"
 )
-
-EXPLICIT_KEY: Final = "@EXPLICIT"
 
 
 class ExplicitLoader(BaseLoader):

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from conda_lockfiles.constants import EXPLICIT_KEY
 from conda_lockfiles.dumpers import explicit
 
 from .. import SINGLE_PACKAGE_ENV
@@ -27,4 +28,4 @@ def test_export_to_explicit(tmp_path: Path) -> None:
         in data
     )
     assert "0595134584589064f56e67d3de1d8fcbb673a972946bce25fb593fb092fdcd97" in data
-    assert "@EXPLICIT" in data
+    assert EXPLICIT_KEY in data

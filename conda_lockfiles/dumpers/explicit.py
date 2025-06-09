@@ -10,6 +10,7 @@ from conda.core.prefix_data import PrefixData
 from conda.history import History
 
 from .. import __version__
+from ..constants import EXPLICIT_KEY
 
 
 def export_to_explicit(
@@ -24,7 +25,7 @@ def export_to_explicit(
         if specs:
             fh.write(f"# specs: {' '.join(str(spec) for spec in specs)}\n")
         fh.write(f"# created-by: conda-lockfiles {__version__}\n")
-        fh.write("@EXPLICIT\n")
+        fh.write(f"{EXPLICIT_KEY}\n")
         for prefix_record in PrefixData(prefix).iter_records_sorted():
             url = prefix_record.get("url")
             if not url or url.startswith(UNKNOWN_CHANNEL):

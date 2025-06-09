@@ -9,6 +9,7 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
+from ..constants import PIXI_LOCK_FILE
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
@@ -17,8 +18,6 @@ if TYPE_CHECKING:
     from conda.common.path import PathType
 
 yaml: Final = YAML(typ="safe")
-
-PIXI_LOCK_FILE: Final = "pixi.lock"
 
 
 class PixiLoader(BaseLoader):
