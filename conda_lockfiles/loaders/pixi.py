@@ -13,11 +13,11 @@ from ..constants import PIXI_LOCK_FILE
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
-    from typing import Any, Final
+    from typing import Any
 
     from conda.common.path import PathType
 
-yaml: Final = YAML(typ="safe")
+yaml = YAML(typ="safe")
 
 
 class PixiLoader(BaseLoader):

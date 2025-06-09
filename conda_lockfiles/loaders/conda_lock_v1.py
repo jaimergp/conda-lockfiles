@@ -11,7 +11,7 @@ from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
 if TYPE_CHECKING:
-    from typing import Any, Final
+    from typing import Any
 
     from conda.common.path import PathType
     from conda.models.records import PackageRecord
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from .records_from_urls import CondaPackageMetadata, CondaPackageURL
 
 
-yaml: Final = YAML(typ="safe")
+yaml = YAML(typ="safe")
 
 
 class CondaLockV1Loader(BaseLoader):
