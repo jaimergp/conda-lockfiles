@@ -10,7 +10,7 @@ from conda.core.prefix_data import PrefixData
 from conda.history import History
 
 from .. import __version__
-from ..constants import EXPLICIT_KEY
+from ..formats import EXPLICIT_KEY
 
 
 def export_to_explicit(

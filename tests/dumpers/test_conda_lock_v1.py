@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 
 from ruamel.yaml import YAML
 
-from conda_lockfiles.constants import CONDA_LOCK_FILE
 from conda_lockfiles.dumpers import conda_lock_v1
+from conda_lockfiles.formats import CONDA_LOCK_FILE
 
 from .. import SINGLE_PACKAGE_ENV
 

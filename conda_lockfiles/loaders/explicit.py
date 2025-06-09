@@ -9,7 +9,7 @@ from conda.common.path import expand
 from conda.common.url import is_url, join_url, path_to_url
 from conda.exceptions import ParseError
 
-from ..constants import EXPLICIT_KEY
+from ..formats import EXPLICIT_KEY
 from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
