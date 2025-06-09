@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from .records_from_urls import CondaPackageMetadata, CondaPackageURL
 
 
-URL_PAT = re.compile(
+URL_PAT: Final = re.compile(
     r"(?:(?P<url_p>.+)(?:[/\\]))?"
     r"(?P<fn>[^/\\#]+(?:\.tar\.bz2|\.conda))"
     r"(?:#("

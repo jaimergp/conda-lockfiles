@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .records_from_urls import CondaPackageMetadata, CondaPackageURL
 
 
-yaml = YAML(typ="safe")
+yaml: Final = YAML(typ="safe")
 
 
 CONDA_LOCK_FILE: Final = "conda-lock.yml"
