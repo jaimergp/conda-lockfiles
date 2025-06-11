@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from conda.base.context import context
 from ruamel.yaml import YAML
 
-from ..formats import CONDA_LOCK_FILE
+from ..constants import CONDA_LOCK_FILE
 from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 

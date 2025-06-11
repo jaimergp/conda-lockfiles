@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from conda_lockfiles.constants import EXPLICIT_KEY
 from conda_lockfiles.dumpers import explicit
-from conda_lockfiles.formats import EXPLICIT_KEY
 
 from .. import SINGLE_PACKAGE_ENV
 

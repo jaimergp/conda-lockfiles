@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from conda_lockfiles.formats import PIXI_LOCK_FILE
+from conda_lockfiles.constants import PIXI_LOCK_FILE
 from conda_lockfiles.loaders.pixi import PixiLoader
 
 from .. import PIXI_DIR

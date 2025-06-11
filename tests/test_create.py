@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 import pytest
 from conda.common.compat import on_win
 
+from conda_lockfiles.constants import CONDA_LOCK_FILE, PIXI_LOCK_FILE
 from conda_lockfiles.create import create_environment_from_lockfile
-from conda_lockfiles.formats import CONDA_LOCK_FILE, PIXI_LOCK_FILE
 
 from . import (
     CONDA_LOCK_METADATA_DIR,
