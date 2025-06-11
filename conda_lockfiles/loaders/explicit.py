@@ -9,6 +9,7 @@ from conda.common.path import expand
 from conda.common.url import is_url, join_url, path_to_url
 from conda.exceptions import ParseError
 
+from ..constants import EXPLICIT_KEY
 from .base import BaseLoader
 from .records_from_urls import records_from_conda_urls
 
@@ -38,7 +39,7 @@ class ExplicitLoader(BaseLoader):
         if not path.exists():
             return False
         data = cls._load(path)
-        if "@EXPLICIT" not in data:
+        if EXPLICIT_KEY not in data:
             return False
         return True
 
@@ -56,7 +57,7 @@ class ExplicitLoader(BaseLoader):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            if line == "@EXPLICIT":
+            if line == EXPLICIT_KEY:
                 continue
             url, metadata = self._parse_line(line)
             conda_metadata_by_url[url] = metadata

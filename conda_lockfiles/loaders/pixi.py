@@ -9,6 +9,7 @@ from conda.base.context import context
 from conda.models.records import PackageRecord
 from ruamel.yaml import YAML
 
+from ..constants import PIXI_LOCK_FILE
 from .base import BaseLoader, build_number_from_build_string
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ class PixiLoader(BaseLoader):
     @classmethod
     def supports(cls, path: PathType) -> bool:
         path = Path(path)
-        if path.name != "pixi.lock" or not path.exists():
+        if path.name != PIXI_LOCK_FILE or not path.exists():
             return False
         data = cls._load(path)
         if data["version"] != 6:
