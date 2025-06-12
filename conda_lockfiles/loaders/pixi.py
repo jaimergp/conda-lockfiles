@@ -7,6 +7,7 @@ from conda.base.context import context
 from conda.models.match_spec import MatchSpec
 from ruamel.yaml import YAML
 
+from ..constants import PIXI_LOCK_FILE
 from .base import BaseLoader, subdict
 
 if TYPE_CHECKING:
@@ -17,8 +18,6 @@ if TYPE_CHECKING:
     from .base import CondaSpecs_v2, PackageRecordOverrides, PypiRecords
 
 yaml: Final = YAML(typ="safe")
-
-PIXI_LOCK_FILE: Final = "pixi.lock"
 
 
 class PixiLoader(BaseLoader):

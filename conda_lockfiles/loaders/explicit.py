@@ -10,6 +10,7 @@ from conda.common.url import is_url, join_url, path_to_url
 from conda.exceptions import ParseError
 from conda.models.match_spec import MatchSpec
 
+from ..constants import EXPLICIT_KEY
 from .base import BaseLoader, subdict
 
 if TYPE_CHECKING:
@@ -37,7 +38,7 @@ class ExplicitLoader(BaseLoader):
         if not path.exists():
             return False
         data = cls._load(path)
-        if "@EXPLICIT" not in data:
+        if EXPLICIT_KEY not in data:
             return False
         return True
 
@@ -55,7 +56,7 @@ class ExplicitLoader(BaseLoader):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            if line == "@EXPLICIT":
+            if line == EXPLICIT_KEY:
                 continue
 
             spec = self._parse_package(line)

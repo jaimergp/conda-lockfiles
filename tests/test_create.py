@@ -7,11 +7,11 @@ import pytest
 from conda.common.compat import on_win
 from conda.models.match_spec import MatchSpec
 
+from conda_lockfiles.constants import CONDA_LOCK_FILE, PIXI_LOCK_FILE
 from conda_lockfiles.create import (
     create_environment_from_lockfile,
     lookup_conda_records,
 )
-from conda_lockfiles.loaders.conda_lock_v1 import CONDA_LOCK_FILE
 
 from . import (
     CONDA_LOCK_METADATA_DIR,
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 def test_create_environment_from_lockfile_pixi_metadata(tmp_path: Path) -> None:
     create_environment_from_lockfile(
-        PIXI_METADATA_DIR / "pixi.lock",
+        PIXI_METADATA_DIR / PIXI_LOCK_FILE,
         tmp_path,
         environment="default",
         platform="linux-64",
