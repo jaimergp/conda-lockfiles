@@ -9,6 +9,13 @@ if TYPE_CHECKING:
     from conda.models.match_spec import MatchSpec
 
     class CondaRecordOverrides(TypedDict):
+        """Fields to override when creating a PackageRecord from a PackageCacheRecord.
+
+        Attributes:
+            depends: List of package dependencies.
+            license: License string for the package.
+        """
+
         depends: NotRequired[list[str]]
         license: NotRequired[str]
 
