@@ -48,8 +48,8 @@ class ExplicitLoader(BaseLoader):
 
     def to_conda_and_pypi(
         self,
-        environment: str | None = "default",
-        platform: str = context.subdir,
+        environment: str | None = None,  # unused
+        platform: str = context.subdir,  # unused
     ) -> tuple[CondaSpecsTuple, PypiRecords]:
         conda = []
         for line in self.data:

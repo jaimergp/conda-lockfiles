@@ -38,7 +38,7 @@ class CondaLockV1Loader(BaseLoader):
 
     def to_conda_and_pypi(
         self,
-        environment: str | None = "default",
+        environment: str | None = None,  # unused
         platform: str = context.subdir,
     ) -> tuple[CondaSpecsMapping, PypiRecords]:
         platforms = self.data.get("metadata", {}).get("platforms")

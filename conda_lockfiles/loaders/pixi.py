@@ -38,9 +38,11 @@ class PixiLoader(BaseLoader):
 
     def to_conda_and_pypi(
         self,
-        environment: str | None = "default",
+        environment: str | None = None,
         platform: str = context.subdir,
     ) -> tuple[CondaSpecsMapping, PypiRecords]:
+        if environment is None:
+            environment = "default"
         env = self.data.get("environments", {}).get(environment)
         if not env:
             raise ValueError(
