@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecsTuple, PypiRecords
+    from ..types import CondaSpecsTuple, PypiRecords
 
 
 URL_PAT: Final = re.compile(

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaRecordOverrides, CondaSpecsMapping, PypiRecords
+    from ..types import CondaRecordOverrides, CondaSpecsMapping, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 

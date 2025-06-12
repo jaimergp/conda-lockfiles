@@ -8,21 +8,11 @@ from conda.base.context import context
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
-    from typing import Any, NotRequired, TypedDict, TypeVar
+    from typing import Any
 
     from conda.common.path import PathType
-    from conda.models.match_spec import MatchSpec
 
-    class CondaRecordOverrides(TypedDict):
-        depends: NotRequired[list[str]]
-        license: NotRequired[str]
-
-    CondaSpecsTuple = tuple[MatchSpec, ...]
-    CondaSpecsMapping = Mapping[MatchSpec, CondaRecordOverrides]
-    CondaSpecs = CondaSpecsTuple | CondaSpecsMapping
-    PypiRecords = tuple[str, ...]
-
-    K = TypeVar("K", bound=str)
+    from ..types import CondaSpecs, PypiRecords
 
 
 class BaseLoader(ABC):
@@ -48,5 +38,7 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
 
-def subdict(mapping: Mapping[str, Any], keys: Iterable[K]) -> dict[K, Any]:
+# FUTURE: Python 3.12+ use generic function syntax
+# def subdict[T: str](mappping: Mapping[str, Any], keys: Iterable[T]) -> dict[T, Any]:
+def subdict(mapping: Mapping[str, Any], keys: Iterable[str]) -> dict[str, Any]:
     return {key: mapping[key] for key in keys if key in mapping}
