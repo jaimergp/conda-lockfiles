@@ -76,6 +76,8 @@ class CondaLockV1Loader(BaseLoader):
         url = package["url"]
         hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
         overrides: CondaRecordOverrides = {
+            # conda-lock v1 stores dependencies as a mapping of package name -> spec,
+            # convert to a list of match spec strings
             "depends": [
                 f"{name} {spec}"
                 for name, spec in package.get("dependencies", {}).items()
