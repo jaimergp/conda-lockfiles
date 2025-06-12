@@ -62,7 +62,7 @@ class ExplicitLoader(BaseLoader):
             spec = self._parse_package(line)
             conda.append(spec)
 
-        return tuple(conda), tuple()
+        return tuple(conda), ()
 
     @staticmethod
     def _parse_package(line: str) -> MatchSpec:
