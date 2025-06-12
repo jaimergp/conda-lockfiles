@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from conda.common.path import PathType
+    from conda.models.match_spec import MatchSpec
 
 
 class LockfileFormatNotSupported(CondaError):
@@ -21,4 +22,16 @@ class LockfileFormatNotSupported(CondaError):
 class ExportLockfileFormatNotSupported(CondaError):
     def __init__(self, lockfile_format: str):
         message = f"Exporting to lockfile format {lockfile_format} is not supported."
+        super().__init__(message)
+
+
+class MissingPackageCacheRecord(CondaError):
+    def __init__(self, match_spec: MatchSpec):
+        message = f"Missing package cache record for: {match_spec}"
+        super().__init__(message)
+
+
+class MultiplePackageCacheRecords(CondaError):
+    def __init__(self, match_spec: MatchSpec):
+        message = f"Multiple package cache records for: {match_spec}"
         super().__init__(message)

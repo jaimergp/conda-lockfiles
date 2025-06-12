@@ -16,7 +16,11 @@ from conda.exceptions import CondaExitZero, DryRunExit
 from conda.models.prefix_graph import PrefixGraph
 from conda.models.records import PackageRecord
 
-from .exceptions import LockfileFormatNotSupported
+from .exceptions import (
+    LockfileFormatNotSupported,
+    MissingPackageCacheRecord,
+    MultiplePackageCacheRecords,
+)
 from .loaders import LOADERS
 
 if TYPE_CHECKING:
@@ -112,10 +116,12 @@ def lookup_conda_records(conda_specs: CondaSpecs) -> CondaRecords:
     # lookup records in package cache
     conda_records: list[PackageRecord] = []
     for match_spec, overrides in conda_specs.items():
-        cache_record = next(PackageCacheData.query_all(match_spec), None)
-        if cache_record is None:
-            raise AssertionError(f"Missing package cache record for: {match_spec}")
-        conda_records.append(PackageRecord.from_objects(cache_record, **overrides))
+        cache_records = tuple(PackageCacheData.query_all(match_spec))
+        if not cache_records:
+            raise MissingPackageCacheRecord(match_spec)
+        elif len(cache_records) > 1:
+            raise MultiplePackageCacheRecords(match_spec)
+        conda_records.append(PackageRecord.from_objects(cache_records[0], **overrides))
     return tuple(conda_records)
 
 
