@@ -11,11 +11,9 @@ from conda.models.match_spec import MatchSpec
 from ruamel.yaml import YAML
 
 if TYPE_CHECKING:
-    from typing import Any, Final
+    from typing import Any
 
     from conda.models.records import PackageRecord
-
-yaml: Final = YAML(typ="safe")
 
 
 def _record_to_conda_lock_v1_package(
@@ -71,4 +69,4 @@ def export_to_conda_lock_v1(prefix: str, lockfile_path: str | None) -> None:
         "package": sorted(packages, key=lambda x: x["name"]),
     }
     with open(lockfile_path, "w") if lockfile_path else nullcontext(sys.stdout) as fh:
-        yaml.dump(output, stream=fh)
+        YAML().dump(output, stream=fh)
