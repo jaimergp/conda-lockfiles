@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecsMapping, PackageRecordOverrides, PypiRecords
+    from .base import CondaRecordOverrides, CondaSpecsMapping, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 
@@ -87,7 +87,7 @@ class PixiLoader(BaseLoader):
     def _parse_package(
         url: str,
         package: dict[str, Any],
-    ) -> tuple[MatchSpec, PackageRecordOverrides]:
+    ) -> tuple[MatchSpec, CondaRecordOverrides]:
         hashes = subdict(package, ["md5", "sha256"])
-        overrides: PackageRecordOverrides = subdict(package, ["license"])  # type: ignore[assignment]
+        overrides: CondaRecordOverrides = subdict(package, ["license"])  # type: ignore[assignment]
         return MatchSpec(url, **hashes), overrides

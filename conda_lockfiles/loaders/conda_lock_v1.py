@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .base import CondaSpecsMapping, PackageRecordOverrides, PypiRecords
+    from .base import CondaRecordOverrides, CondaSpecsMapping, PypiRecords
 
 yaml: Final = YAML(typ="safe")
 
@@ -72,10 +72,10 @@ class CondaLockV1Loader(BaseLoader):
     @staticmethod
     def _parse_package(
         package: dict[str, Any],
-    ) -> tuple[MatchSpec, PackageRecordOverrides]:
+    ) -> tuple[MatchSpec, CondaRecordOverrides]:
         url = package["url"]
         hashes = subdict(package.get("hash", {}), ["md5", "sha256"])
-        overrides: PackageRecordOverrides = {
+        overrides: CondaRecordOverrides = {
             "depends": [
                 f"{name} {spec}"
                 for name, spec in package.get("dependencies", {}).items()

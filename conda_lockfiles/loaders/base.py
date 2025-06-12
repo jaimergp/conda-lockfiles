@@ -13,12 +13,12 @@ if TYPE_CHECKING:
     from conda.common.path import PathType
     from conda.models.match_spec import MatchSpec
 
-    class PackageRecordOverrides(TypedDict):
+    class CondaRecordOverrides(TypedDict):
         depends: NotRequired[list[str]]
         license: NotRequired[str]
 
     CondaSpecsTuple = tuple[MatchSpec, ...]
-    CondaSpecsMapping = Mapping[MatchSpec, PackageRecordOverrides]
+    CondaSpecsMapping = Mapping[MatchSpec, CondaRecordOverrides]
     CondaSpecs = CondaSpecsTuple | CondaSpecsMapping
     PypiRecords = tuple[str, ...]
 

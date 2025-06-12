@@ -22,7 +22,7 @@ from . import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from conda_lockfiles.loaders.base import PackageRecordOverrides
+    from conda_lockfiles.loaders.base import CondaRecordOverrides
 
 
 def test_create_environment_from_lockfile_pixi_metadata(tmp_path: Path) -> None:
@@ -79,7 +79,7 @@ def test_lookup_conda_records(tmp_path: Path) -> None:
         sha256=sha256,
     )
     license = "ONLY_IN_TEST"
-    overrides: PackageRecordOverrides = {"license": license}
+    overrides: CondaRecordOverrides = {"license": license}
 
     records = lookup_conda_records({spec: overrides})
     assert isinstance(records, tuple)
