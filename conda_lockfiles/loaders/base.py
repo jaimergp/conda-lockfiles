@@ -17,9 +17,9 @@ if TYPE_CHECKING:
         depends: NotRequired[list[str]]
         license: NotRequired[str]
 
-    CondaSpecs_v1 = tuple[MatchSpec, ...]
-    CondaSpecs_v2 = Mapping[MatchSpec, PackageRecordOverrides]
-    CondaSpecs = CondaSpecs_v1 | CondaSpecs_v2
+    CondaSpecsTuple = tuple[MatchSpec, ...]
+    CondaSpecsMapping = Mapping[MatchSpec, PackageRecordOverrides]
+    CondaSpecs = CondaSpecsTuple | CondaSpecsMapping
     PypiRecords = tuple[str, ...]
 
     K = TypeVar("K", bound=str)
