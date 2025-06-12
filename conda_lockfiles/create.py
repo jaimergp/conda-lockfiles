@@ -29,9 +29,7 @@ if TYPE_CHECKING:
 
     from conda.common.path import PathType
 
-    from .loaders.base import CondaSpecs, PypiRecords
-
-    CondaRecords = tuple[PackageRecord, ...]
+    from .types import CondaRecords, CondaSpecs, PypiRecords
 
 
 def create_environment_from_lockfile(

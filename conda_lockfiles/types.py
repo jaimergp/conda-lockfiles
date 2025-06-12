@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from typing import NotRequired, TypedDict
 
     from conda.models.match_spec import MatchSpec
+    from conda.models.records import PackageRecord
 
     class CondaRecordOverrides(TypedDict):
         """Fields to override when creating a PackageRecord from a PackageCacheRecord.
@@ -22,4 +23,6 @@ if TYPE_CHECKING:
     CondaSpecsTuple = tuple[MatchSpec, ...]
     CondaSpecsMapping = Mapping[MatchSpec, CondaRecordOverrides]
     CondaSpecs = CondaSpecsTuple | CondaSpecsMapping
+    CondaRecords = tuple[PackageRecord, ...]
+
     PypiRecords = tuple[str, ...]
