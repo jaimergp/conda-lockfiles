@@ -100,7 +100,7 @@ def install_pypi_records(
 
 
 def lookup_conda_records(conda_specs: CondaSpecs) -> CondaRecords:
-    # normalize specs to a mapping
+    # normalize specs to a mapping of MatchSpec -> CondaRecordOverrides
     if not isinstance(conda_specs, Mapping):
         conda_specs = {spec: {} for spec in conda_specs}
     conda_specs = dict(conda_specs)
