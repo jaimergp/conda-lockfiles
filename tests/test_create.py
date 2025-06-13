@@ -5,9 +5,13 @@ from typing import TYPE_CHECKING
 
 import pytest
 from conda.common.compat import on_win
+from conda.models.match_spec import MatchSpec
 
 from conda_lockfiles.constants import CONDA_LOCK_FILE, PIXI_LOCK_FILE
-from conda_lockfiles.create import create_environment_from_lockfile
+from conda_lockfiles.create import (
+    create_environment_from_lockfile,
+    lookup_conda_records,
+)
 
 from . import (
     CONDA_LOCK_METADATA_DIR,
@@ -17,6 +21,8 @@ from . import (
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+    from conda_lockfiles.loaders.base import CondaRecordOverrides
 
 
 def test_create_environment_from_lockfile_pixi_metadata(tmp_path: Path) -> None:
@@ -62,3 +68,28 @@ def test_create_environment_from_explicit_file(tmp_path: Path) -> None:
         data["sha256"]
         == "3c9fefdfb2335e8641642e964cfaf20513d40ec709ab559b47b52d99b2e46fea"
     )
+
+
+def test_lookup_conda_records(tmp_path: Path) -> None:
+    md5 = "4222072737ccff51314b5ece9c7d6f5a"
+    sha256 = "5aaa366385d716557e365f0a4e9c3fca43ba196872abbbe3d56bb610d131e192"
+    spec = MatchSpec(
+        "https://conda.anaconda.org/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda",
+        md5=md5,
+        sha256=sha256,
+    )
+    license = "ONLY_IN_TEST"
+    overrides: CondaRecordOverrides = {"license": license}
+
+    records = lookup_conda_records({spec: overrides})
+    assert isinstance(records, tuple)
+    assert len(records) == 1
+    record = records[0]
+    assert record.name == "tzdata"
+    # set by match spec
+    assert record.md5 == md5
+    assert record.sha256 == sha256
+    # set by overrides
+    assert record.license == license
+    # only known after downloading
+    assert record.size == 122_968
